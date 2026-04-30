@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Straive — Operationalizing Data Analytics & AI</title>
+  <meta name="description" content="Straive operationalizes data analytics and AI for global enterprises.">
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --orange:      #F05A28;
+      --orange-dark: #D44A1A;
+      --orange-glow: rgba(240,90,40,0.15);
+
+      --ink:         #0C0C10;
+      --ink-2:       #6B6B6B;
+      --ink-3:       #9B9B9B;
+      --white:       #FFFFFF;
+      --warm:        #F8F7F4;   /* Ramp's warm off-white */
+      --warm-2:      #F0EEE9;
+      --border:      #E8E8E8;
+      --border-s:    #F0F0EE;
+      --dark:        #0C0C10;
+      --dark-2:      #161618;
+      --dark-border: rgba(255,255,255,0.08);
+
+      --font: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+
+      /* Ramp-scale type — very large display, tight tracking */
+      --t-11:  11px;
+      --t-12:  12px;
+      --t-13:  13px;
+      --t-14:  14px;
+      --t-15:  15px;
+      --t-16:  16px;
+      --t-18:  18px;
+      --t-20:  20px;
+      --t-24:  clamp(20px, 2.2vw, 24px);
+      --t-32:  clamp(24px, 3vw, 32px);
+      --t-48:  clamp(32px, 4.5vw, 52px);
+      --t-64:  clamp(40px, 6vw, 68px);
+      --t-80:  clamp(48px, 7.5vw, 88px);
+
+      /* Spacing — generous, Ramp-scale */
+      --s4:   4px;
+      --s8:   8px;
+      --s12:  12px;
+      --s16:  16px;
+      --s20:  20px;
+      --s24:  24px;
+      --s28:  28px;
+      --s32:  32px;
+      --s40:  40px;
+      --s48:  48px;
+      --s56:  56px;
+      --s64:  64px;
+      --s80:  80px;
+      --s96:  96px;
+      --s112: 112px;
+
+      --r-sm:   3px;
+      --r-md:   6px;
+      --r-lg:   8px;
+      --r-xl:   10px;
+      --r-full: 9999px;
+
+      --nav-h:  64px;
+      --wrap:   1200px;
+      --ease:   cubic-bezier(0.25, 0.1, 0.25, 1);
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body { font-family: var(--font); color: var(--ink); background: var(--white); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+    ul { list-style: none; }
+    img, svg { display: block; }
+    :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 3px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ─── LAYOUT UTILS ───────────────────────────────────────── */
+    .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--s48); }
+    @media (max-width: 768px) { .wrap { padding: 0 var(--s24); } }
+
+    .section-light { background: var(--white); }
+    .section-warm  { background: var(--warm); }
+    .section-dark  { background: var(--dark); }
+
+    /* ─── SCROLL REVEAL ──────────────────────────────────────── */
+    .r {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+    }
+    .r.on { opacity: 1; transform: none; }
+    .r.d1 { transition-delay: 0.08s; }
+    .r.d2 { transition-delay: 0.16s; }
+    .r.d3 { transition-delay: 0.24s; }
+    .r.d4 { transition-delay: 0.32s; }
+
+    /* ─── PILL LABEL (Ramp signature) ────────────────────────── */
+    .pill-label {
+      display: inline-flex; align-items: center;
+      gap: var(--s8);
+      font-size: var(--t-11);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      background: var(--warm-2);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: var(--r-full);
+      margin-bottom: var(--s20);
+    }
+    .pill-label-dark {
+      color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.05);
+      border-color: var(--dark-border);
+    }
+
+    /* ─── SECTION HEADING SYSTEM ─────────────────────────────── */
+    .h-display {
+      font-size: var(--t-80); font-weight: 300;
+      letter-spacing: -0.05em; line-height: 1.0;
+      color: var(--ink);
+    }
+    .h-section {
+      font-size: var(--t-64); font-weight: 300;
+      letter-spacing: -0.04em; line-height: 1.05;
+      color: var(--ink);
+    }
+    .h-section-white {
+      font-size: var(--t-64); font-weight: 300;
+      letter-spacing: -0.04em; line-height: 1.05;
+      color: var(--white);
+    }
+    .h-card {
+      font-size: var(--t-18); font-weight: 600;
+      letter-spacing: -0.02em; line-height: 1.3;
+      color: var(--ink);
+    }
+    .body-lg {
+      font-size: var(--t-18); font-weight: 400;
+      line-height: 1.65; color: var(--ink-2);
+    }
+    .body-md {
+      font-size: var(--t-15); font-weight: 400;
+      line-height: 1.65; color: var(--ink-2);
+    }
+    .body-sm {
+      font-size: var(--t-13); font-weight: 400;
+      line-height: 1.6; color: var(--ink-3);
+    }
+    .label-upper {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .label-upper-dark {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ─── BUTTONS ─────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--s8);
+      font-family: var(--font); font-size: var(--t-14); font-weight: 600;
+      letter-spacing: 0.01em; cursor: pointer;
+      border: none; border-radius: var(--r-sm);
+      transition: background 0.18s var(--ease), transform 0.15s var(--ease), box-shadow 0.18s var(--ease);
+    }
+    .btn-primary {
+      color: var(--white); background: var(--orange);
+      padding: 12px 24px;
+    }
+    .btn-primary:hover {
+      background: var(--orange-dark); transform: translateY(-1px);
+      box-shadow: 0 6px 24px var(--orange-glow);
+    }
+    .btn-primary:active { transform: none; box-shadow: none; }
+    .btn-ghost {
+      color: var(--ink); background: transparent;
+      border: 1px solid var(--border); padding: 12px 22px;
+    }
+    .btn-ghost:hover { background: var(--warm); border-color: #d0d0d0; }
+    .btn-text {
+      color: var(--ink-2); background: none; border: none;
+      padding: 0; font-size: var(--t-14); font-weight: 500;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.18s, gap 0.18s;
+    }
+    .btn-text:hover { color: var(--ink); gap: 10px; }
+    .btn-text-dark {
+      color: rgba(255,255,255,0.4);
+    }
+    .btn-text-dark:hover { color: rgba(255,255,255,0.75); gap: 10px; }
+    .btn-text svg, .btn-text-dark svg { transition: transform 0.18s; }
+    .btn-text:hover svg { transform: translateX(2px); }
+
+    /* ─── NAV ────────────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(24px) saturate(1.8);
+      -webkit-backdrop-filter: blur(24px) saturate(1.8);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .nav.solid { border-color: var(--border); box-shadow: 0 1px 12px rgba(0,0,0,0.04); }
+    .nav-inner {
+      height: 100%; max-width: var(--wrap); margin: 0 auto;
+      padding: 0 var(--s48);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    @media (max-width: 768px) { .nav-inner { padding: 0 var(--s24); } }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+    .nav-links { display: flex; align-items: center; gap: var(--s32); }
+    .nav-links a {
+      font-size: var(--t-14); font-weight: 500; color: var(--ink-2);
+      transition: color 0.18s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    @media (max-width: 900px) { .nav-links { display: none; } }
+
+    /* ─── 1. HERO ─────────────────────────────────────────────── */
+    .hero {
+      position: relative; min-height: 50vh;
+      display: flex; align-items: center;
+      padding: calc(var(--nav-h) + var(--s32)) var(--s48) var(--s48);
+      overflow: hidden; background: var(--white);
+    }
+    @media (max-width: 768px) { .hero { padding: calc(var(--nav-h) + var(--s16)) var(--s24) var(--s32); } }
+    #particle-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; opacity: 0.4;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: var(--wrap); margin: 0 auto; width: 100%;
+    }
+    .hero-h1 {
+      font-size: var(--t-80); font-weight: 300;
+      letter-spacing: -0.05em; line-height: 1.0;
+      color: var(--ink); max-width: 16ch;
+      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.1s forwards;
+    }
+    .hero-sub {
+      font-size: var(--t-20); font-weight: 400; line-height: 1.55;
+      color: var(--ink-2); max-width: 44ch;
+      margin-top: var(--s24);
+      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.28s forwards;
+    }
+    .hero-cta {
+      margin-top: var(--s40);
+      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.42s forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ─── 2. CAPABILITIES ────────────────────────────────────── */
+    .cap-section { padding: var(--s112) 0; }
+    .cap-header { margin-bottom: var(--s56); }
+    /* Ramp bento — 2 wide + 2 narrow */
+    .cap-bento {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: var(--s12);
+    }
+    .cap-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--s40) var(--s32);
+      transition: box-shadow 0.22s var(--ease), transform 0.22s var(--ease);
+    }
+    .cap-card:hover {
+      box-shadow: 0 6px 32px rgba(0,0,0,0.07);
+      transform: translateY(-2px);
+    }
+    .cap-card-icon {
+      width: 38px; height: 38px; color: var(--ink-3);
+      margin-bottom: var(--s24);
+    }
+    .cap-card h3 { margin-bottom: var(--s12); }
+    @media (max-width: 1024px) { .cap-bento { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px)  { .cap-bento { grid-template-columns: 1fr; } }
+
+    /* ─── 3. AGENTIC AI ──────────────────────────────────────── */
+    .agentic-section { padding: var(--s112) 0; }
+    .agentic-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--s80); align-items: start;
+    }
+    .agentic-stats {
+      display: flex; gap: var(--s48);
+      margin-top: var(--s40);
+      padding-top: var(--s40);
+      border-top: 1px solid var(--dark-border);
+    }
+    .agentic-stat-n {
+      font-size: var(--t-48); font-weight: 300;
+      letter-spacing: -0.04em; line-height: 1;
+      color: var(--white);
+    }
+    .agentic-stat-l {
+      font-size: var(--t-12); font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: var(--s8);
+    }
+    .levers-title {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: var(--s16);
+    }
+    .lever-list { display: flex; flex-direction: column; gap: 1px; }
+    .lever {
+      padding: var(--s20) var(--s24);
+      background: rgba(255,255,255,0.04);
+      border-radius: 0;
+      border-left: 2px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .lever:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+    .lever:last-child  { border-radius: 0 0 var(--r-md) var(--r-md); }
+    .lever:hover { border-left-color: var(--orange); background: rgba(255,255,255,0.07); }
+    .lever-name {
+      font-size: var(--t-15); font-weight: 600; color: var(--white);
+      margin-bottom: 4px;
+    }
+    .lever-desc { font-size: var(--t-13); color: rgba(255,255,255,0.38); line-height: 1.5; }
+    .agentic-link { margin-top: var(--s32); }
+    .agentic-video {
+      height: 130px; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--dark-border); border-radius: var(--r-md);
+      display: flex; flex-direction: row;
+      align-items: center; justify-content: flex-start; gap: var(--s20);
+      padding: 0 var(--s28); margin-top: var(--s32); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .agentic-video:hover { background: rgba(255,255,255,0.07); }
+    .agentic-play {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--orange); display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s var(--spring), box-shadow 0.2s;
+    }
+    .agentic-video:hover .agentic-play { transform: scale(1.1); box-shadow: 0 6px 24px rgba(240,90,40,0.35); }
+    .agentic-video-text { display: flex; flex-direction: column; gap: 5px; }
+    .agentic-video-title {
+      font-size: var(--t-15); font-weight: 600; color: rgba(255,255,255,0.75);
+      letter-spacing: -0.01em;
+    }
+    .agentic-video-label {
+      font-size: var(--t-12); font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
+    }
+    @media (max-width: 1024px) {
+      .agentic-inner { grid-template-columns: 1fr; gap: var(--s56); }
+    }
+
+    /* ─── 4. INDUSTRIES ──────────────────────────────────────── */
+    .ind-section { padding: var(--s112) 0; }
+    .ind-header { margin-bottom: var(--s48); }
+    .ind-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      column-gap: var(--s32);
+    }
+    .ind-card {
+      padding: var(--s24) 0;
+      border-top: 1.5px solid var(--border);
+      display: flex; flex-direction: column; gap: var(--s12);
+      transition: border-color 0.18s;
+      background: none; cursor: default;
+    }
+    .ind-card:hover { border-top-color: var(--orange); }
+    .ind-card:hover .ind-icon { color: var(--ink-2); }
+    .ind-card:hover .ind-name { color: var(--ink); }
+    .ind-icon { width: 28px; height: 28px; color: var(--ink-3); transition: color 0.18s; }
+    .ind-name { font-size: var(--t-15); font-weight: 600; color: var(--ink-2); letter-spacing: -0.01em; transition: color 0.18s; }
+    @media (max-width: 1024px) { .ind-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px)  { .ind-grid { grid-template-columns: repeat(2, 1fr); } }
+
+
+    /* ─── 6. PARTNERSHIPS ────────────────────────────────────── */
+    .partners-section { padding: var(--s96) 0; }
+    .partner-logos {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--s12); flex-wrap: wrap;
+      margin-top: var(--s48);
+    }
+    .partner-chip {
+      font-size: var(--t-14); font-weight: 700; letter-spacing: 0.01em;
+      color: var(--ink-3); padding: 14px 32px;
+      border: 1px solid var(--border); border-radius: var(--r-md);
+      background: var(--white); cursor: default;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      min-width: 120px; transition: border-color 0.22s, box-shadow 0.22s, color 0.22s;
+      position: relative;
+    }
+    .partner-chip .chip-name { transition: opacity 0.22s, transform 0.22s; }
+    .partner-chip .chip-logo {
+      opacity: 0; max-height: 0; overflow: hidden;
+      transition: opacity 0.22s, max-height 0.22s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .partner-chip:hover .chip-name { opacity: 0.5; }
+    .partner-chip:hover .chip-logo { opacity: 1; max-height: 40px; }
+    .partner-chip.p-aws:hover    { border-color: #FF9900; box-shadow: 0 4px 20px rgba(255,153,0,0.12); }
+    .partner-chip.p-db:hover     { border-color: #FF3621; box-shadow: 0 4px 20px rgba(255,54,33,0.12); }
+    .partner-chip.p-gcp:hover    { border-color: #4285F4; box-shadow: 0 4px 20px rgba(66,133,244,0.12); }
+    .partner-chip.p-ms:hover     { border-color: #00A4EF; box-shadow: 0 4px 20px rgba(0,164,239,0.12); }
+    .partner-chip.p-snow:hover   { border-color: #29B5E8; box-shadow: 0 4px 20px rgba(41,181,232,0.12); }
+
+    /* ─── 7. IMPACT ──────────────────────────────────────────── */
+    .impact-section { padding: var(--s112) 0; }
+    .impact-header { margin-bottom: var(--s56); }
+    .impact-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: var(--s16);
+    }
+    .impact-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: var(--s40) var(--s32);
+      display: flex; flex-direction: column;
+      transition: box-shadow 0.22s, transform 0.22s;
+      position: relative; overflow: hidden;
+    }
+    .impact-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--orange);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s var(--ease);
+    }
+    .impact-card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); transform: translateY(-2px); }
+    .impact-card:hover::after { transform: scaleX(1); }
+    .impact-tag { margin-bottom: var(--s16); }
+    .impact-num {
+      font-size: var(--t-48); font-weight: 300;
+      letter-spacing: -0.05em; line-height: 1;
+      color: var(--ink); margin-bottom: var(--s16);
+    }
+    .impact-desc { font-size: var(--t-15); color: var(--ink-2); line-height: 1.6; flex: 1; }
+    .impact-link { margin-top: var(--s24); }
+    @media (max-width: 900px)  { .impact-grid { grid-template-columns: 1fr; } }
+
+    /* ─── 8. WE ARE STRAIVE ──────────────────────────────────── */
+    .about-section { padding: var(--s112) 0; }
+    .about-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--s80); align-items: start;
+    }
+    .about-pillars { margin-top: var(--s40); display: flex; flex-direction: column; gap: 1px; }
+    .pillar {
+      display: flex; align-items: center; gap: var(--s20);
+      padding: var(--s20) var(--s24);
+      background: var(--white); border-left: 2px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .pillar:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+    .pillar:last-child  { border-radius: 0 0 var(--r-md) var(--r-md); }
+    .pillar:hover { border-left-color: var(--orange); }
+    .pillar-n {
+      font-size: var(--t-32); font-weight: 300;
+      letter-spacing: -0.04em; color: var(--border);
+      line-height: 1; min-width: 44px;
+    }
+    .pillar-t { font-size: var(--t-16); font-weight: 600; color: var(--ink); }
+    /* Ramp-style stat grid */
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--s12);
+    }
+    .stat-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: var(--s32) var(--s28);
+      transition: box-shadow 0.2s;
+    }
+    .stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .stat-n {
+      font-size: var(--t-48); font-weight: 300;
+      letter-spacing: -0.05em; line-height: 1;
+      color: var(--ink);
+    }
+    .stat-u {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-2); margin-top: var(--s8);
+    }
+    .stat-l { font-size: var(--t-13); color: var(--ink-3); margin-top: var(--s4); }
+    @media (max-width: 1024px) { .about-inner { grid-template-columns: 1fr; gap: var(--s48); } }
+
+    /* ─── 9. AWARDS ──────────────────────────────────────────── */
+    .awards-section { padding: var(--s112) 0; }
+    .awards-header { margin-bottom: var(--s56); }
+    .awards-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: var(--s12);
+    }
+    .award-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--dark-border);
+      border-radius: var(--r-xl); padding: var(--s28) var(--s24);
+      transition: background 0.2s;
+    }
+    .award-card:hover { background: rgba(255,255,255,0.07); }
+    .award-org {
+      font-size: var(--t-11); font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); margin-bottom: var(--s12);
+    }
+    .award-title { font-size: var(--t-14); font-weight: 500; color: rgba(255,255,255,0.7); line-height: 1.45; }
+    @media (max-width: 900px) { .awards-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ─── 10. THOUGHT LEADERSHIP ─────────────────────────────── */
+    .thought-section { padding: var(--s112) 0; }
+    .thought-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; flex-wrap: wrap;
+      gap: var(--s24); margin-bottom: var(--s56);
+    }
+    .thought-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s16); }
+    .thought-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r-xl); overflow: hidden;
+      transition: box-shadow 0.22s, transform 0.22s;
+    }
+    .thought-card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); transform: translateY(-3px); }
+    .thought-thumb {
+      height: 156px; background: var(--warm-2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .thought-thumb svg { color: #d0cfc8; }
+    .thought-body { padding: var(--s28) var(--s24); }
+    .thought-type { margin-bottom: var(--s12); }
+    .thought-title { font-size: var(--t-16); font-weight: 600; color: var(--ink); line-height: 1.4; letter-spacing: -0.01em; }
+    .thought-link { margin-top: var(--s20); }
+    @media (max-width: 900px) { .thought-grid { grid-template-columns: 1fr; } }
+
+    /* ─── 11. CULTURE ────────────────────────────────────────── */
+    .culture-section { padding: var(--s112) 0; }
+    .culture-inner {
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: var(--s80); align-items: center;
+    }
+    .culture-tags { display: flex; flex-wrap: wrap; gap: var(--s8); margin-top: var(--s32); }
+    .ctag {
+      font-size: var(--t-13); font-weight: 500; color: var(--ink-2);
+      background: var(--warm-2); border: 1px solid var(--border);
+      padding: 7px 16px; border-radius: var(--r-full);
+      transition: all 0.18s;
+    }
+    .ctag:hover { color: var(--ink); border-color: #c0c0c0; }
+    .culture-cta { margin-top: var(--s40); }
+    .culture-img {
+      aspect-ratio: 4/3; border-radius: var(--r-xl);
+      background: var(--warm-2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .culture-img svg { color: #d0cfc8; }
+    @media (max-width: 1024px) { .culture-inner { grid-template-columns: 1fr; gap: var(--s40); } }
+
+    /* ─── 12. FINAL CTA ──────────────────────────────────────── */
+    .cta-section { padding: var(--s112) 0; text-align: center; }
+    .cta-rule { width: 40px; height: 2px; background: var(--orange); margin: 0 auto var(--s40); }
+    .cta-h2 {
+      font-size: var(--t-64); font-weight: 300;
+      letter-spacing: -0.04em; line-height: 1.05;
+      color: var(--white); max-width: 20ch; margin: 0 auto var(--s40);
+    }
+
+    /* ─── 13. CONTACT FORM ───────────────────────────────────── */
+    .contact-section { padding: var(--s112) 0; }
+    .contact-inner {
+      display: grid; grid-template-columns: 1fr 1.5fr;
+      gap: var(--s80); align-items: start;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s12); }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field.span2 { grid-column: span 2; }
+    label {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.04em; color: var(--ink-2);
+    }
+    input, textarea {
+      font-family: var(--font); font-size: var(--t-15);
+      color: var(--ink); background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 11px 16px; outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--ink); box-shadow: 0 0 0 3px rgba(12,12,16,0.06);
+    }
+    textarea { resize: vertical; min-height: 110px; }
+    .form-submit { margin-top: var(--s4); }
+    @media (max-width: 1024px) { .contact-inner { grid-template-columns: 1fr; gap: var(--s40); } }
+    @media (max-width: 600px)  { .form-grid { grid-template-columns: 1fr; } .form-field.span2 { grid-column: span 1; } }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .footer { background: var(--dark-2); padding: var(--s80) 0 var(--s48); }
+    .footer-top {
+      display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+      gap: var(--s48); padding-bottom: var(--s64);
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .footer-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.04em;
+      color: var(--white); margin-bottom: var(--s16);
+    }
+    .footer-tag {
+      font-size: var(--t-13); color: rgba(255,255,255,0.28);
+      line-height: 1.65; max-width: 22ch; margin-bottom: var(--s24);
+    }
+    .footer-socials { display: flex; gap: var(--s8); }
+    .fsocial {
+      width: 32px; height: 32px; border-radius: var(--r-sm);
+      border: 1px solid var(--dark-border);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.3); transition: all 0.18s;
+    }
+    .fsocial:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+    .footer-col-h {
+      font-size: var(--t-11); font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: var(--s20);
+    }
+    .footer-links { display: flex; flex-direction: column; gap: var(--s12); }
+    .footer-links a { font-size: var(--t-13); color: rgba(255,255,255,0.28); transition: color 0.18s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.75); }
+    .footer-bottom {
+      padding-top: var(--s32);
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: var(--s16);
+    }
+    .footer-subs { display: flex; align-items: center; gap: var(--s8); flex-wrap: wrap; }
+    .fsub {
+      font-size: var(--t-12); font-weight: 600; color: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 5px 12px; border-radius: var(--r-sm);
+    }
+    .footer-legal { display: flex; gap: var(--s24); flex-wrap: wrap; }
+    .footer-legal a { font-size: var(--t-12); color: rgba(255,255,255,0.2); transition: color 0.18s; }
+    .footer-legal a:hover { color: rgba(255,255,255,0.5); }
+    .footer-copy { font-size: var(--t-12); color: rgba(255,255,255,0.18); }
+    @media (max-width: 1024px) { .footer-top { grid-template-columns: 1fr 1fr; gap: var(--s32); } }
+    @media (max-width: 600px)  { .footer-bottom { flex-direction: column; align-items: flex-start; } }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<header>
+  <nav class="nav" id="nav" aria-label="Primary navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Straive</a>
+      <ul class="nav-links">
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Industries</a></li>
+        <li><a href="#">Resource Library</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+      <a href="#contact" class="btn btn-primary">Contact Us</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+<!-- ── 1. HERO ───────────────────────────────────────────────── -->
+<section class="hero section-light" aria-label="Hero">
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <h1 class="hero-h1">We Operationalize Data Analytics &amp; AI For Global Enterprises.</h1>
+    <p class="hero-sub">Turning complex data into autonomous, intelligent actions that drive measurable ROI at enterprise scale.</p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">
+        Contact Us
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 2. CAPABILITIES ───────────────────────────────────────── -->
+<section class="cap-section section-warm" aria-labelledby="cap-h">
+  <div class="wrap">
+    <div class="cap-header r">
+      <div class="pill-label">What We Do</div>
+      <h2 class="h-section" id="cap-h">Explore Our Capabilities</h2>
+    </div>
+    <div class="cap-bento">
+
+      <article class="cap-card r d1">
+        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
+          <rect x="3" y="7" width="32" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="3" y="17" width="24" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="3" y="27" width="16" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="33" cy="29.5" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3 class="h-card">Data Management</h3>
+        <p class="body-md" style="margin-top:8px">Achieve seamless, secure, and actionable data flow across the organisation.</p>
+      </article>
+
+      <article class="cap-card r d2">
+        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
+          <path d="M4 30 L10 20 L16 24 L22 12 L28 18 L34 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="7" r="2.5" fill="currentColor"/>
+        </svg>
+        <h3 class="h-card">Insights &amp; Analytics</h3>
+        <p class="body-md" style="margin-top:8px">Transform data into actionable insights that drive smarter decisions.</p>
+      </article>
+
+      <article class="cap-card r d3">
+        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
+          <circle cx="19" cy="19" r="6" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="7" cy="11" r="2.8" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="31" cy="11" r="2.8" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="7" cy="27" r="2.8" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="31" cy="27" r="2.8" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="9.8" y1="12.5" x2="14.5" y2="16" stroke="currentColor" stroke-width="1.3"/>
+          <line x1="28.2" y1="12.5" x2="23.5" y2="16" stroke="currentColor" stroke-width="1.3"/>
+          <line x1="9.8" y1="25.5" x2="14.5" y2="22" stroke="currentColor" stroke-width="1.3"/>
+          <line x1="28.2" y1="25.5" x2="23.5" y2="22" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <h3 class="h-card">AI Design &amp; Deployment</h3>
+        <p class="body-md" style="margin-top:8px">Build intelligent, scalable AI solutions that enhance business agility.</p>
+      </article>
+
+      <article class="cap-card r d4">
+        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="21" y="3" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="3" y="21" width="13" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M21 28h14M28 21v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <h3 class="h-card">Product Engg. &amp; Expert-In-The-Loop Ops</h3>
+        <p class="body-md" style="margin-top:8px">Accelerate product innovation with seamless expert-driven operations.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. AGENTIC AI ─────────────────────────────────────────── -->
+<section class="agentic-section section-dark" aria-labelledby="agentic-h">
+  <div class="wrap">
+    <div class="agentic-inner">
+
+      <div class="r">
+        <div class="pill-label pill-label-dark">Agentic AI</div>
+        <h2 class="h-section-white" id="agentic-h">Agentic AI for Scalable Intelligence</h2>
+        <div class="agentic-stats">
+          <div>
+            <div class="agentic-stat-n">80+</div>
+            <div class="agentic-stat-l">Enterprise Engagements</div>
+          </div>
+          <div>
+            <div class="agentic-stat-n">5K+</div>
+            <div class="agentic-stat-l">AI Experts</div>
+          </div>
+        </div>
+        <div class="agentic-video" role="button" aria-label="Play LLM Foundry Playground video">
+          <div class="agentic-play">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M6 4l9 5-9 5V4z" fill="white"/>
+            </svg>
+          </div>
+          <div class="agentic-video-text">
+            <span class="agentic-video-title">LLM Foundry Playground</span>
+            <span class="agentic-video-label">Watch Overview</span>
+          </div>
+        </div>
+        <div class="agentic-link">
+          <a href="#" class="btn btn-text btn-text-dark">
+            Learn More
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="r d1">
+        <p class="levers-title">Our Core Levers</p>
+        <div class="lever-list">
+          <div class="lever"><div class="lever-name">LLM Foundry</div><div class="lever-desc">60% faster cycles. 7-day PoC creation.</div></div>
+          <div class="lever"><div class="lever-name">Enterprise Security</div><div class="lever-desc">Governed, compliant, bias-free AI.</div></div>
+          <div class="lever"><div class="lever-name">Seamless Integration</div><div class="lever-desc">Future-proof across ERP, CRM &amp; cloud.</div></div>
+          <div class="lever"><div class="lever-name">Multi-Modal Agents</div><div class="lever-desc">Text, audio, video, image &amp; documents.</div></div>
+          <div class="lever"><div class="lever-name">Reusable Accelerators</div><div class="lever-desc">Industry agents &amp; solution libraries.</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. INDUSTRIES ─────────────────────────────────────────── -->
+<section class="ind-section section-warm" aria-labelledby="ind-h">
+  <div class="wrap">
+    <div class="ind-header r">
+      <div class="pill-label">Where We Operate</div>
+      <h2 class="h-section" id="ind-h">Enhancing Outcomes Across Industries</h2>
+    </div>
+    <div class="ind-grid">
+
+      <article class="ind-card r d1">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M3 26V13l13-8 13 8v13" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <rect x="11" y="18" width="10" height="8" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <span class="ind-name">Capital Markets</span>
+      </article>
+
+      <article class="ind-card r d1">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="3" y="9" width="26" height="17" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M3 14h26" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <span class="ind-name">Banking &amp; Financial Services</span>
+      </article>
+
+      <article class="ind-card r d2">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M6 26c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="ind-name">Education</span>
+      </article>
+
+      <article class="ind-card r d2">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M16 5v3M16 24v3M5 16h3M24 16h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="ind-name">Energy &amp; Utilities</span>
+      </article>
+
+      <article class="ind-card r d3">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="4" y="12" width="24" height="14" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M9 12V9a7 7 0 0114 0v3" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <span class="ind-name">Manufacturing &amp; Supply Chain</span>
+      </article>
+
+      <article class="ind-card r d3">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16 4l2.5 7h7.5l-6 4.5 2.5 7L16 18.5 9.5 22.5l2.5-7L6 11h7.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <span class="ind-name">Pharma &amp; Life Sciences</span>
+      </article>
+
+      <article class="ind-card r d4">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M4 22l6-8 5 5 5-10 8 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="ind-name">Science &amp; Research</span>
+      </article>
+
+      <article class="ind-card r d4">
+        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="10" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M16 9v7l4 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="ind-name">Sports Analytics</span>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 6. PARTNERSHIPS ───────────────────────────────────────── -->
+<section class="partners-section section-warm" aria-labelledby="partners-h">
+  <div class="wrap">
+    <div class="r" style="text-align:center">
+      <div class="pill-label" style="justify-content:center">Technology Alliances</div>
+      <h2 class="h-section" id="partners-h">Hyperscaler Partnerships That Drive Growth</h2>
+    </div>
+    <div class="partner-logos r d1">
+
+      <div class="partner-chip p-aws">
+        <span class="chip-name">AWS</span>
+        <span class="chip-logo">
+          <svg width="48" height="28" viewBox="0 0 48 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.9 10.6c0 .5.1.9.2 1.2.2.3.4.6.7.9.1.1.2.2.2.4 0 .1-.1.3-.3.4l-1 .7c-.1.1-.3.1-.4.1-.2 0-.3-.1-.5-.2-.2-.2-.4-.5-.6-.8-.2-.3-.3-.6-.5-1-1.2 1.4-2.8 2.1-4.6 2.1-1.3 0-2.4-.4-3.1-1.1C3.2 12.7 2.8 11.8 2.8 10.7c0-1.2.4-2.1 1.3-2.8.9-.7 2-.9 3.5-.9.5 0 1 0 1.5.1s1.1.2 1.6.3V6.9c0-1-.2-1.7-.6-2.1-.4-.4-1.1-.6-2-.6-.4 0-.9.1-1.4.2-.5.1-.9.3-1.4.5-.2.1-.4.2-.5.2H4.6c-.2 0-.3-.2-.3-.4V4c0-.2.1-.3.2-.4.2-.1.6-.3 1.1-.4.5-.1 1.1-.2 1.7-.2 1.3 0 2.2.3 2.8.9.6.6.9 1.5.9 2.8v3.9zm-6.3 2.3c.5 0 .9-.1 1.4-.3.5-.2.9-.5 1.3-1 .2-.3.4-.6.5-1 .1-.4.1-.8.1-1.3v-.6c-.4-.1-.8-.2-1.3-.2-.5 0-.9-.1-1.3-.1-.9 0-1.6.2-2 .6-.4.4-.7.9-.7 1.6 0 .7.2 1.1.5 1.5.3.5.8.8 1.5.8zm10.8 1.5c-.2 0-.4 0-.5-.1-.1-.1-.2-.3-.3-.6L15.2 4.3c-.1-.3-.1-.5-.1-.6 0-.2.1-.3.3-.3h1.3c.2 0 .4 0 .5.1.1.1.2.3.3.6l2.2 8.6 2-8.6c.1-.3.2-.5.3-.6.1-.1.3-.1.5-.1h1c.2 0 .4 0 .5.1.1.1.2.3.3.6l2 8.7 2.3-8.7c.1-.3.2-.5.3-.6.1-.1.3-.1.5-.1h1.2c.2 0 .3.1.3.3 0 .1 0 .2-.1.4l-3.2 10.4c-.1.3-.2.5-.3.6-.1.1-.3.1-.5.1h-1.1c-.2 0-.4 0-.5-.1-.1-.1-.2-.3-.3-.6l-2-8.3-2 8.3c-.1.3-.2.5-.3.6-.1.1-.3.1-.5.1h-1zm17 .3c-.8 0-1.5-.1-2.2-.3-.7-.2-1.2-.4-1.6-.7-.2-.1-.3-.3-.3-.5v-.7c0-.3.1-.4.3-.4.1 0 .2 0 .3.1l.3.2c.4.2.9.4 1.4.5.5.1 1 .2 1.5.2.8 0 1.4-.1 1.8-.4.4-.3.6-.7.6-1.2 0-.4-.1-.7-.4-.9-.3-.2-.8-.5-1.6-.7l-2.3-.7c-1.1-.4-2-.9-2.5-1.6-.5-.7-.8-1.5-.8-2.3 0-.7.1-1.3.4-1.8.3-.5.7-1 1.2-1.3.5-.4 1-.6 1.7-.8.6-.2 1.3-.3 2-.3.3 0 .7 0 1 .1.4 0 .7.1 1 .2.3.1.6.2.9.3.3.1.5.2.6.3.2.1.3.2.4.4.1.1.1.3.1.5v.6c0 .3-.1.4-.3.4-.1 0-.3-.1-.6-.2-.9-.4-1.9-.6-3-.6-.7 0-1.3.1-1.7.4-.4.3-.6.6-.6 1.1 0 .4.1.7.4.9.3.2.9.5 1.7.7l2.3.7c1.1.4 1.9.9 2.4 1.5.5.6.7 1.4.7 2.2 0 .7-.1 1.3-.4 1.9-.3.5-.7 1-1.2 1.4-.5.4-1.1.6-1.7.8-.7.1-1.4.2-2.1.2z" fill="#FF9900"/>
+            <path d="M41.5 21.7c-4.9 3.6-12 5.5-18.1 5.5-8.6 0-16.3-3.2-22.2-8.4-.5-.4 0-1 .5-.7 6.3 3.7 14.1 5.9 22.2 5.9 5.4 0 11.4-1.1 16.9-3.4.8-.4 1.5.5.7 1.1z" fill="#FF9900"/>
+            <path d="M43.6 19.3c-.6-.8-4.1-.4-5.7-.2-.5.1-.5-.4-.1-.7 2.8-2 7.4-1.4 7.9-.7.5.7-.1 5.3-2.8 7.5-.4.3-.8.2-.6-.3.6-1.5 2-4.8 1.3-5.6z" fill="#FF9900"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="partner-chip p-db">
+        <span class="chip-name">Databricks</span>
+        <span class="chip-logo">
+          <svg width="36" height="32" viewBox="0 0 36 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 0L0 10.4v5.2L18 26l18-10.4v-5.2L18 0z" fill="#FF3621"/>
+            <path d="M0 15.6L18 26l18-10.4v5.2L18 32 0 21.6v-6z" fill="#FF3621" opacity=".7"/>
+            <path d="M0 10.4L18 21l18-10.6-18-10.4L0 10.4z" fill="white" opacity=".2"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="partner-chip p-gcp">
+        <span class="chip-name">Google Cloud</span>
+        <span class="chip-logo">
+          <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24.8 13.3h-4.9v3h2.8c-.4 2-2.2 3-4.7 3-2.9 0-5.2-2.4-5.2-5.3s2.3-5.3 5.2-5.3c1.3 0 2.4.4 3.2 1.2l2.1-2.2C22 6.5 20.2 5.7 18 5.7c-4.6 0-8.3 3.7-8.3 8.3s3.7 8.3 8.3 8.3c4.8 0 8-3.4 8-8.1 0-.6-.1-1.1-.2-1.6l.1-.3z" fill="#4285F4"/>
+            <path d="M11.2 11.8l-2.6 1.9c.5 1 1.2 1.8 2 2.5l2.4-2.4c-.8-.5-1.4-1.2-1.8-2z" fill="#34A853"/>
+            <path d="M18 22.3c2.3 0 4.3-.8 5.7-2l-2.7-2.1c-.8.5-1.8.8-3 .8-2.5 0-4.6-1.7-5.3-4H9.9c.9 3.5 4.1 6 8.1 6 .1-.1.1-.1 0 0z" fill="#FBBC05"/>
+            <path d="M26.7 13c-.2-.6-.4-1.2-.7-1.7l-2.7 2.3.5 1h2.9v-1.6z" fill="#EA4335"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="partner-chip p-ms">
+        <span class="chip-name">Microsoft</span>
+        <span class="chip-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="14" height="14" fill="#F25022"/>
+            <rect x="17" y="1" width="14" height="14" fill="#7FBA00"/>
+            <rect x="1" y="17" width="14" height="14" fill="#00A4EF"/>
+            <rect x="17" y="17" width="14" height="14" fill="#FFB900"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="partner-chip p-snow">
+        <span class="chip-name">Snowflake</span>
+        <span class="chip-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2v28M16 2l-4 4M16 2l4 4M16 30l-4-4M16 30l4-4M2 16h28M2 16l4-4M2 16l4 4M30 16l-4-4M30 16l-4 4M5.4 5.4l21.2 21.2M5.4 5.4l5.2.8M5.4 5.4l.8 5.2M26.6 26.6l-5.2-.8M26.6 26.6l-.8-5.2M26.6 5.4L5.4 26.6M26.6 5.4l-.8 5.2M26.6 5.4l-5.2.8M5.4 26.6l.8-5.2M5.4 26.6l5.2-.8" stroke="#29B5E8" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 7. IMPACT ─────────────────────────────────────────────── -->
+<section class="impact-section section-light" aria-labelledby="impact-h">
+  <div class="wrap">
+    <div class="impact-header r">
+      <div class="pill-label">Case Studies</div>
+      <h2 class="h-section" id="impact-h">Driving Impact With Our Data Analytics &amp; AI Capabilities</h2>
+    </div>
+    <div class="impact-grid">
+
+      <article class="impact-card r d1">
+        <div class="impact-tag"><span class="label-upper">Banking</span></div>
+        <p class="impact-num">20%</p>
+        <p class="impact-desc">Reduced customer onboarding time for a Tier 1 bank. Achieved for a top-10 US commercial bank.</p>
+        <div class="impact-link">
+          <a href="#" class="btn btn-text">
+            Learn More
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="impact-card r d2">
+        <div class="impact-tag"><span class="label-upper">Financial Services</span></div>
+        <p class="impact-num">99.5%</p>
+        <p class="impact-desc">AI fraud detection accuracy for a regional bank. Identified fraudulent checks at scale.</p>
+        <div class="impact-link">
+          <a href="#" class="btn btn-text">
+            Learn More
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="impact-card r d3">
+        <div class="impact-tag"><span class="label-upper">Publishing</span></div>
+        <p class="impact-num">€20M</p>
+        <p class="impact-desc">Collected in overdue receivables for an open-access publisher. Cleared 25,000+ invoices.</p>
+        <div class="impact-link">
+          <a href="#" class="btn btn-text">
+            Learn More
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 8. WE ARE STRAIVE ──────────────────────────────────────── -->
+<section class="about-section section-warm" aria-labelledby="about-h">
+  <div class="wrap">
+    <div class="about-inner">
+
+      <div class="r">
+        <div class="pill-label">Who We Are</div>
+        <h2 class="h-section" id="about-h">We Are Straive</h2>
+        <p class="body-lg" style="margin-top:var(--s24); max-width:44ch">As an operationalizing AI company, we don't just build top-tier data analytics and AI solutions — we integrate them seamlessly into your core workflows.</p>
+        <div class="about-pillars">
+          <div class="pillar"><div class="pillar-n" aria-hidden="true">01</div><div class="pillar-t">Improve Efficiency</div></div>
+          <div class="pillar"><div class="pillar-n" aria-hidden="true">02</div><div class="pillar-t">Enhance Revenues</div></div>
+          <div class="pillar"><div class="pillar-n" aria-hidden="true">03</div><div class="pillar-t">Elevate Experiences</div></div>
+        </div>
+      </div>
+
+      <div class="r d1">
+        <p class="body-lg" style="max-width:36ch; margin-bottom:var(--s32)">We Translate Experience and Expertise Into Business Outcomes</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-n">3–5×</div>
+            <div class="stat-u">ROI</div>
+            <div class="stat-l">Average return delivered</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-n" data-count="7" data-suffix=" Days">7 Days</div>
+            <div class="stat-u">Prototype</div>
+            <div class="stat-l">Concept to working PoC</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-n" data-count="18000" data-suffix="+">18,000+</div>
+            <div class="stat-u">Associates</div>
+            <div class="stat-l">Global talent</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-n" data-count="6000" data-suffix="+">6,000+</div>
+            <div class="stat-u">SMEs</div>
+            <div class="stat-l">Subject matter experts</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 9. AWARDS ─────────────────────────────────────────────── -->
+<section class="awards-section section-dark" aria-labelledby="awards-h">
+  <div class="wrap">
+    <div class="awards-header r">
+      <div class="pill-label pill-label-dark">Recognition</div>
+      <h2 class="h-section-white" id="awards-h">We Are Recognized for Impactful Results</h2>
+    </div>
+    <div class="awards-grid">
+      <div class="award-card r d1"><p class="award-org">Newsweek</p><p class="award-title">AI Impact Awards 2025 Winner</p></div>
+      <div class="award-card r d1"><p class="award-org">Globee Awards</p><p class="award-title">Gold — Best AI Development</p></div>
+      <div class="award-card r d2"><p class="award-org">AIM Research</p><p class="award-title">Challenger — Top Data Science Service Providers</p></div>
+      <div class="award-card r d2"><p class="award-org">Microsoft × CNBC</p><p class="award-title">AI for All Award — Societal Progress</p></div>
+      <div class="award-card r d3"><p class="award-org">Industry Recognition</p><p class="award-title">Best Firms for Women in Tech To Work For</p></div>
+      <div class="award-card r d3"><p class="award-org">Everest Group PEAK Matrix</p><p class="award-title">Major Contender — Data Annotations &amp; Labeling</p></div>
+      <div class="award-card r d4"><p class="award-org">ISG</p><p class="award-title">Rising Star (Europe) / Product Challenger (US) — IDP Services</p></div>
+      <div class="award-card r d4"><p class="award-org">Edison Awards</p><p class="award-title">Bronze — Innovative Geospatial Solution</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 10. THOUGHT LEADERSHIP ────────────────────────────────── -->
+<section class="thought-section section-light" aria-labelledby="thought-h">
+  <div class="wrap">
+    <div class="thought-header r">
+      <div>
+        <div class="pill-label">Insights</div>
+        <h2 class="h-section" id="thought-h">We Provide Industry-Leading Thought Leadership</h2>
+      </div>
+      <a href="#" class="btn btn-ghost" style="flex-shrink:0">View All</a>
+    </div>
+    <div class="thought-grid">
+
+      <article class="thought-card r d1">
+        <div class="thought-thumb">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="10" y="7" width="28" height="34" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M16 18h16M16 24h12M16 30h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="thought-body">
+          <div class="thought-type"><span class="label-upper">Industry Report</span></div>
+          <h3 class="thought-title">Cold Storage Industry Report 2026</h3>
+          <div class="thought-link">
+            <a href="#" class="btn btn-text">Dive Deeper
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="thought-card r d2">
+        <div class="thought-thumb">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M18 24l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="thought-body">
+          <div class="thought-type"><span class="label-upper">Blog</span></div>
+          <h3 class="thought-title">Improving Clinical Data Quality: From Manual Reporting to Intelligent Automation</h3>
+          <div class="thought-link">
+            <a href="#" class="btn btn-text">Dive Deeper
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="thought-card r d3">
+        <div class="thought-thumb">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <path d="M10 38L24 10l14 28H10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M24 22v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="24" cy="34" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="thought-body">
+          <div class="thought-type"><span class="label-upper">Analyst Recognition</span></div>
+          <h3 class="thought-title">Straive Recognized as a Leader in AIM Research's PeMa Quadrant for Agentic AI Service Providers 2025</h3>
+          <div class="thought-link">
+            <a href="#" class="btn btn-text">Dive Deeper
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 11. CULTURE ───────────────────────────────────────────── -->
+<section class="culture-section section-warm" aria-labelledby="culture-h">
+  <div class="wrap">
+    <div class="culture-inner">
+      <div class="r">
+        <div class="pill-label">Life at Straive</div>
+        <h2 class="h-section" id="culture-h">Explore Life @ Straive</h2>
+        <p class="body-lg" style="margin-top:var(--s24); max-width:44ch">At Straive, we believe that our teams and our capability will make data and AI accessible, adaptable, and actionable.</p>
+        <div class="culture-tags">
+          <span class="ctag">Meritocracy</span>
+          <span class="ctag">Innovation</span>
+          <span class="ctag">Returnship Programme</span>
+          <span class="ctag">Wellness Activities</span>
+          <span class="ctag">Respect</span>
+        </div>
+        <div class="culture-cta">
+          <a href="#" class="btn btn-ghost">Learn More</a>
+        </div>
+      </div>
+      <div class="culture-img r d1">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <circle cx="40" cy="30" r="12" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M14 68c0-14.359 11.64-26 26-26s26 11.641 26 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 12. FINAL CTA ─────────────────────────────────────────── -->
+<section class="cta-section section-dark" aria-labelledby="cta-h">
+  <div class="r" style="max-width:800px; margin:0 auto; padding: 0 var(--s48)">
+    <div class="cta-rule" aria-hidden="true"></div>
+    <h2 class="cta-h2" id="cta-h">We Partner to Operationalize Data Analytics &amp; AI for Your Enterprise</h2>
+    <a href="#contact" class="btn btn-primary">
+      Contact Us
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ── 13. CONTACT FORM ──────────────────────────────────────── -->
+<section class="contact-section section-light" id="contact" aria-labelledby="contact-h">
+  <div class="wrap">
+    <div class="contact-inner">
+      <div class="r">
+        <div class="pill-label">Get In Touch</div>
+        <h2 class="h-section" id="contact-h">Get In Touch</h2>
+        <p class="body-lg" style="margin-top:var(--s24); max-width:38ch">Enter your information and describe your inquiry. We'll get back to you as soon as possible.</p>
+      </div>
+      <form class="r d1" novalidate aria-label="Contact form">
+        <div class="form-grid">
+          <div class="form-field"><label for="fname">First Name</label><input type="text" id="fname" autocomplete="given-name" placeholder="Jane"></div>
+          <div class="form-field"><label for="lname">Last Name</label><input type="text" id="lname" autocomplete="family-name" placeholder="Smith"></div>
+          <div class="form-field"><label for="email">Work Email</label><input type="email" id="email" autocomplete="email" placeholder="jane@company.com"></div>
+          <div class="form-field"><label for="company">Company</label><input type="text" id="company" autocomplete="organization" placeholder="Acme Corp"></div>
+          <div class="form-field span2"><label for="inquiry">Inquiry</label><textarea id="inquiry" placeholder="Describe your project or question…"></textarea></div>
+          <div class="form-field form-submit"><button type="submit" class="btn btn-primary">Submit <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Straive</div>
+        <p class="footer-tag">Operationalizing data analytics &amp; AI for global enterprises.</p>
+        <nav class="footer-socials" aria-label="Connect with us">
+          <a href="#" class="fsocial" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" class="fsocial" aria-label="Instagram"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="fsocial" aria-label="Facebook"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" class="fsocial" aria-label="X"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="fsocial" aria-label="YouTube"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
+        </nav>
+      </div>
+      <div>
+        <p class="footer-col-h">Services</p>
+        <ul class="footer-links">
+          <li><a href="#">Data Management</a></li><li><a href="#">Insights &amp; Analytics</a></li>
+          <li><a href="#">AI Engineering</a></li><li><a href="#">Product Engg. &amp; Ops</a></li>
+          <li><a href="#">IT &amp; Tech-Ops</a></li><li><a href="#">AI Customer Experience</a></li>
+          <li><a href="#">Generative AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-h">Industries</p>
+        <ul class="footer-links">
+          <li><a href="#">Investment Management</a></li><li><a href="#">Banking &amp; Finance</a></li>
+          <li><a href="#">Education</a></li><li><a href="#">Energy</a></li>
+          <li><a href="#">Logistics &amp; Supply Chain</a></li><li><a href="#">Pharma &amp; Life Sciences</a></li>
+          <li><a href="#">Retail Tech / Media</a></li><li><a href="#">Science &amp; Research</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-h">Thought Leadership</p>
+        <ul class="footer-links">
+          <li><a href="#">Blogs</a></li><li><a href="#">Case Studies</a></li>
+          <li><a href="#">Brochures</a></li><li><a href="#">Whitepapers</a></li>
+          <li><a href="#">E-books</a></li><li><a href="#">Webinars</a></li>
+          <li><a href="#">Infographics</a></li><li><a href="#">Videos</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-h">About Us</p>
+        <ul class="footer-links">
+          <li><a href="#">About Straive</a></li><li><a href="#">ESG</a></li>
+          <li><a href="#">News</a></li><li><a href="#">Partnership</a></li>
+          <li><a href="#">Careers</a></li><li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-subs">
+        <span class="fsub">Gramener</span><span class="fsub">Learning Mate</span>
+        <span class="fsub">DoubleLine</span><span class="fsub">SG Analytics</span>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Cookie Policy</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a>
+      </div>
+      <p class="footer-copy">© 2026 Straive. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ── JS ────────────────────────────────────────────────────── -->
+<script>
+/* Nav */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 20), { passive: true });
+
+/* Particle canvas */
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes, mouse = { x: -9999, y: -9999 };
+
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
+  function mkNodes() {
+    nodes = Array.from({ length: Math.floor(W * H / 13000) }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.4 + .7
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 120) { ctx.beginPath(); ctx.strokeStyle = `rgba(12,12,16,${(1-d/120)*.13})`; ctx.lineWidth = .7; ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke(); }
+      }
+      const mx = nodes[i].x - mouse.x, my = nodes[i].y - mouse.y;
+      const md = Math.sqrt(mx*mx + my*my);
+      if (md < 150) { const f = (150-md)/150*.012; nodes[i].vx -= mx*f; nodes[i].vy -= my*f; }
+    }
+    nodes.forEach(n => {
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(12,12,16,0.18)'; ctx.fill();
+      n.x += n.vx; n.y += n.vy; n.vx *= .99; n.vy *= .99;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      n.x = Math.max(0, Math.min(W, n.x)); n.y = Math.max(0, Math.min(H, n.y));
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', () => { resize(); mkNodes(); }, { passive: true });
+  const hero = canvas.closest('section');
+  hero.addEventListener('mousemove', e => { const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; }, { passive: true });
+  hero.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+  resize(); mkNodes(); draw();
+})();
+
+/* Scroll reveal */
+const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); ro.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+document.querySelectorAll('.r').forEach(el => ro.observe(el));
+
+/* Counters */
+function animateCount(el, to, dur = 1500) {
+  const sfx = el.dataset.suffix || '';
+  let start = null;
+  const step = ts => {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / dur, 1);
+    const v = Math.round(to * (1 - Math.pow(1 - p, 3)));
+    el.textContent = (v >= 1000 ? (v/1000).toFixed(0)+'K' : v) + sfx;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+const co = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const c = parseInt(e.target.dataset.count); if (c) animateCount(e.target, c); co.unobserve(e.target); } }), { threshold: .5 });
+document.querySelectorAll('[data-count]').forEach(el => co.observe(el));
+</script>
+</body>
+</html>
