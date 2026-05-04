@@ -529,8 +529,10 @@
     .ind-section {
       padding: var(--s112) 0 var(--s80);
       position: relative; overflow: hidden;
-      background: var(--warm);
+      background: var(--ink);
     }
+    .ind-section .h-section { color: var(--white); }
+    .ind-section .pill-label { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
     .ind-section::before {
       content: '';
       position: absolute; inset: 0; z-index: 2;
@@ -603,7 +605,9 @@
 
 
     /* ─── 6. PARTNERSHIPS ────────────────────────────────────── */
-    .partners-section { padding: var(--s96) 0; }
+    .partners-section { padding: var(--s96) 0; background: var(--ink); }
+    .partners-section .h-section { color: var(--white); }
+    .partners-section .pill-label { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
     .partner-logos {
       display: flex; align-items: center; justify-content: center;
       gap: var(--s12); flex-wrap: wrap;
@@ -611,12 +615,12 @@
     }
     .partner-chip {
       font-size: var(--t-14); font-weight: 700; letter-spacing: 0.01em;
-      color: var(--ink-3); padding: 0;
-      border: 1px solid var(--border); border-radius: var(--r-md);
-      background: var(--white); cursor: default;
+      color: rgba(255,255,255,0.5); padding: 0;
+      border: 1px solid var(--dark-border); border-radius: var(--r-md);
+      background: rgba(255,255,255,0.04); cursor: default;
       display: flex; align-items: center; justify-content: center;
       min-width: 140px; height: 72px;
-      transition: border-color 0.22s, box-shadow 0.22s;
+      transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
       position: relative; overflow: hidden;
     }
     .partner-chip .chip-name {
@@ -834,7 +838,7 @@
     /* ─── 11. CULTURE ────────────────────────────────────────── */
     /* ─── 11–12. CAREERS + CTA COMBINED ────────────────────────── */
     .cc-section {
-      background: #EBEBEA;
+      background: var(--ink);
       padding: 40px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
     }
@@ -843,48 +847,41 @@
       display: flex; flex-direction: column; justify-content: space-between;
       min-height: 420px; position: relative; overflow: hidden;
     }
-    .cc-left { background: #F8F7F4; }
-    .cc-right { background: var(--ink); }
+    .cc-left { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+    .cc-right { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
     .cc-card-arrow {
       position: absolute; top: 24px; right: 24px;
       width: 36px; height: 36px; border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
       display: flex; align-items: center; justify-content: center;
-      color: var(--ink-3); background: transparent;
+      color: rgba(255,255,255,0.4); background: transparent;
       transition: background 0.18s;
     }
-    .cc-right .cc-card-arrow { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); }
-    .cc-card-arrow:hover { background: rgba(0,0,0,0.05); }
-    .cc-right .cc-card-arrow:hover { background: rgba(255,255,255,0.08); }
+    .cc-card-arrow:hover { background: rgba(255,255,255,0.08); }
     .cc-card-top { display: flex; flex-direction: column; gap: 16px; }
     .cc-eyebrow {
       display: inline-flex; align-self: flex-start;
       font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--ink-3);
-      background: rgba(0,0,0,0.06); padding: 5px 12px; border-radius: 100px;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.08); padding: 5px 12px; border-radius: 100px;
     }
-    .cc-right .cc-eyebrow { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.45); }
     .cc-heading {
       font-size: clamp(1.6rem, 2.2vw, 2.4rem); font-weight: 300;
-      letter-spacing: -0.03em; line-height: 1.15; color: var(--ink);
+      letter-spacing: -0.03em; line-height: 1.15; color: var(--white);
     }
-    .cc-heading span { color: #999; }
-    .cc-right .cc-heading { color: #fff; }
-    .cc-right .cc-heading span { color: rgba(255,255,255,0.4); }
+    .cc-heading span { color: rgba(255,255,255,0.4); }
     .cc-desc {
-      font-size: 14px; color: var(--ink-3); line-height: 1.65; max-width: 40ch;
+      font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; max-width: 40ch;
     }
-    .cc-right .cc-desc { color: rgba(255,255,255,0.45); }
     .culture-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
     .ctag {
-      font-size: 12px; font-weight: 500; color: var(--ink-2);
-      background: transparent; border: 1px solid rgba(0,0,0,0.14);
+      font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6);
+      background: transparent; border: 1px solid rgba(255,255,255,0.14);
       padding: 5px 14px; border-radius: 100px;
       transition: all 0.18s; display: inline-flex; align-self: flex-start;
     }
-    .ctag:hover { background: rgba(0,0,0,0.05); }
+    .ctag:hover { background: rgba(255,255,255,0.06); }
     .cc-card-bottom { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
-    .cc-right .btn-primary { margin-top: 0; }
     @media (max-width: 1024px) {
       .cc-section { grid-template-columns: 1fr; padding: 24px; }
       .cc-card { min-height: 360px; }
@@ -1340,7 +1337,7 @@
 
 
 <!-- ── 6. PARTNERSHIPS ───────────────────────────────────────── -->
-<section class="partners-section section-warm" aria-labelledby="partners-h">
+<section class="partners-section" aria-labelledby="partners-h">
   <div class="wrap">
     <div class="r" style="text-align:center">
       <div class="pill-label" style="justify-content:center">Technology Alliances</div>
@@ -1614,7 +1611,7 @@
       </div>
     </div>
     <div class="cc-card-bottom">
-      <a href="#" class="btn btn-ghost">Explore Careers</a>
+      <a href="#" class="btn btn-primary">Explore Careers</a>
     </div>
   </div>
 
