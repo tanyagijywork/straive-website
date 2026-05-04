@@ -65,7 +65,7 @@
       --r-full: 9999px;
 
       --nav-h:  64px;
-      --wrap:   1200px;
+      --wrap:   1440px;
       --ease:   cubic-bezier(0.25, 0.1, 0.25, 1);
       --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -84,8 +84,8 @@
     }
 
     /* ─── LAYOUT UTILS ───────────────────────────────────────── */
-    .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--s48); }
-    @media (max-width: 768px) { .wrap { padding: 0 var(--s24); } }
+    .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 768px) { .wrap { padding: 0 20px; } }
 
     .section-light { background: var(--white); }
     .section-warm  { background: var(--warm); }
@@ -203,195 +203,403 @@
     .btn-text svg, .btn-text-dark svg { transition: transform 0.18s; }
     .btn-text:hover svg { transform: translateX(2px); }
 
-    /* ─── NAV ────────────────────────────────────────────────── */
+    /* ─── NAV — transparent → liquid glass on scroll ────────── */
     .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+      z-index: 200; width: 100%; max-width: 1520px;
       height: var(--nav-h);
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(24px) saturate(1.8);
-      -webkit-backdrop-filter: blur(24px) saturate(1.8);
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: 1px solid transparent;
+      border-radius: 0;
+      box-shadow: none;
+      transition:
+        top 0.45s cubic-bezier(0.4,0,0.2,1),
+        width 0.45s cubic-bezier(0.4,0,0.2,1),
+        border-radius 0.45s cubic-bezier(0.4,0,0.2,1),
+        background 0.45s ease,
+        border-color 0.45s ease,
+        box-shadow 0.45s ease;
     }
-    .nav.solid { border-color: var(--border); box-shadow: 0 1px 12px rgba(0,0,0,0.04); }
+    .nav.solid {
+      top: 14px;
+      width: calc(100% - 80px); max-width: 1420px;
+      border-radius: 16px;
+      background: rgba(20,20,26,0.55);
+      backdrop-filter: blur(32px) saturate(1.5) brightness(1.1);
+      -webkit-backdrop-filter: blur(32px) saturate(1.5) brightness(1.1);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow:
+        0 6px 36px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 -1px 0 rgba(255,255,255,0.04);
+    }
     .nav-inner {
-      height: 100%; max-width: var(--wrap); margin: 0 auto;
-      padding: 0 var(--s48);
+      height: 100%; padding: 0 40px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    @media (max-width: 768px) { .nav-inner { padding: 0 var(--s24); } }
+    @media (max-width: 768px) { .nav.solid { width: calc(100% - 32px); top: 10px; } .nav-inner { padding: 0 20px; } }
     .nav-logo {
       font-size: 18px; font-weight: 700; letter-spacing: -0.04em;
-      color: var(--ink);
+      color: var(--white);
     }
-    .nav-links { display: flex; align-items: center; gap: var(--s32); }
+    .nav-right { display: flex; align-items: center; gap: var(--s28); }
+    .nav-links { display: flex; align-items: center; gap: var(--s28); list-style: none; }
     .nav-links a {
-      font-size: var(--t-14); font-weight: 500; color: var(--ink-2);
+      font-size: var(--t-14); font-weight: 500; color: rgba(255,255,255,0.75);
       transition: color 0.18s;
     }
-    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover { color: var(--white); }
+    .nav .btn-primary {
+      background: var(--orange);
+      box-shadow: 0 2px 12px rgba(240,90,40,0.35);
+    }
     @media (max-width: 900px) { .nav-links { display: none; } }
 
     /* ─── 1. HERO ─────────────────────────────────────────────── */
     .hero {
-      position: relative; min-height: 50vh;
-      display: flex; align-items: center;
-      padding: calc(var(--nav-h) + var(--s32)) var(--s48) var(--s48);
-      overflow: hidden; background: var(--white);
+      position: relative; min-height: 58vh;
+      display: flex; align-items: flex-end;
+      padding: calc(var(--nav-h) + var(--s32)) 40px var(--s64);
+      overflow: hidden; background: var(--ink);
     }
-    @media (max-width: 768px) { .hero { padding: calc(var(--nav-h) + var(--s16)) var(--s24) var(--s32); } }
-    #particle-canvas {
+    @media (max-width: 768px) { .hero { padding: calc(var(--nav-h) + var(--s16)) 20px var(--s48); align-items: flex-end; } }
+    .hero-video {
       position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; opacity: 0.4;
+      object-fit: cover; object-position: center;
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        105deg,
+        rgba(12,12,16,0.82) 0%,
+        rgba(12,12,16,0.65) 50%,
+        rgba(12,12,16,0.40) 100%
+      );
     }
     .hero-inner {
       position: relative; z-index: 2;
       max-width: var(--wrap); margin: 0 auto; width: 100%;
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: var(--s64);
+    }
+    .hero-left { flex: 1; min-width: 0; }
+    .hero-right {
+      flex-shrink: 0; width: 300px;
+      display: flex; flex-direction: column; gap: var(--s24);
+      padding-bottom: 6px;
+      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.32s forwards;
     }
     .hero-h1 {
       font-size: var(--t-80); font-weight: 300;
       letter-spacing: -0.05em; line-height: 1.0;
-      color: var(--ink); max-width: 16ch;
+      color: var(--white);
       opacity: 0; animation: fadeUp 0.9s var(--ease) 0.1s forwards;
     }
-    .hero-sub {
-      font-size: var(--t-20); font-weight: 400; line-height: 1.55;
-      color: var(--ink-2); max-width: 44ch;
-      margin-top: var(--s24);
-      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.28s forwards;
+    .hero-eyebrow {
+      display: flex; align-items: flex-start; gap: var(--s8);
+      font-size: var(--t-14); font-weight: 400; line-height: 1.55;
+      color: var(--white);
+    }
+    .hero-eyebrow-arrow {
+      font-size: 18px; line-height: 1.3;
+      color: rgba(255,255,255,0.55); flex-shrink: 0;
     }
     .hero-cta {
-      margin-top: var(--s40);
-      opacity: 0; animation: fadeUp 0.9s var(--ease) 0.42s forwards;
+      display: flex; gap: var(--s12); flex-wrap: wrap;
+    }
+    .btn-ghost-white {
+      color: var(--white); background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25); padding: 12px 22px;
+      border-radius: var(--r-sm);
+      font-family: var(--font); font-size: var(--t-14); font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: var(--s8);
+      transition: background 0.18s, border-color 0.18s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost-white:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); }
+    @media (max-width: 768px) {
+      .hero-inner { flex-direction: column; align-items: flex-start; gap: var(--s32); }
+      .hero-right { width: 100%; }
     }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: none; }
     }
 
-    /* ─── 2. CAPABILITIES ────────────────────────────────────── */
-    .cap-section { padding: var(--s112) 0; }
-    .cap-header { margin-bottom: var(--s56); }
-    /* Ramp bento — 2 wide + 2 narrow */
-    .cap-bento {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr;
-      gap: var(--s12);
+    /* ─── 2. CAPABILITIES (ACCORDION) ───────────────────────── */
+    .cap-section { padding-top: var(--s96); padding-bottom: 0; }
+    .cap-header {
+      max-width: var(--wrap); margin: 0 auto var(--s48);
+      padding: 0 40px;
     }
-    .cap-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      padding: var(--s40) var(--s32);
-      transition: box-shadow 0.22s var(--ease), transform 0.22s var(--ease);
+    @media (max-width: 768px) { .cap-header { padding: 0 20px; } }
+
+    .cap-accordion {
+      display: flex; height: 303px;
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+      overflow: hidden;
     }
-    .cap-card:hover {
-      box-shadow: 0 6px 32px rgba(0,0,0,0.07);
-      transform: translateY(-2px);
+    .cap-panel {
+      flex: 1; position: relative;
+      border-right: 1px solid var(--dark-border);
+      overflow: hidden; cursor: pointer;
+      transition: flex 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      min-width: 0;
     }
-    .cap-card-icon {
-      width: 38px; height: 38px; color: var(--ink-3);
-      margin-bottom: var(--s24);
+    .cap-panel:last-child { border-right: none; }
+    .cap-panel.is-active { flex: 4; }
+
+    /* active panel — image fill with dark overlay for text legibility */
+    .cap-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(rgba(12,12,16,0.72), rgba(12,12,16,0.72)),
+        url('Assets/AdobeStock_1291857457.jpeg') center / cover no-repeat;
+      opacity: 0; transition: opacity 0.5s ease;
     }
-    .cap-card h3 { margin-bottom: var(--s12); }
-    @media (max-width: 1024px) { .cap-bento { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px)  { .cap-bento { grid-template-columns: 1fr; } }
+    .cap-panel.is-active .cap-bg { opacity: 1; }
+
+    .cap-illus { display: none; }
+
+    /* label — always visible at bottom */
+    .cap-label {
+      position: absolute; bottom: var(--s28); left: var(--s32); right: var(--s32);
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); line-height: 1.4;
+      transition: opacity 0.25s; z-index: 2;
+    }
+    .cap-panel.is-active .cap-label { opacity: 0; pointer-events: none; }
+
+    /* expanded content — anchored to bottom, row layout */
+    .cap-content {
+      position: absolute;
+      bottom: var(--s28); left: var(--s32); right: var(--s32);
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: var(--s24);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 0.38s ease 0.2s, transform 0.38s ease 0.2s;
+      z-index: 2; pointer-events: none;
+    }
+    .cap-panel.is-active .cap-content { opacity: 1; transform: none; pointer-events: auto; }
+
+    .cap-content-body { flex: 1; min-width: 0; }
+    .cap-index {
+      display: block;
+      font-size: var(--t-11); font-weight: 600; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25); margin-bottom: var(--s8);
+    }
+    .cap-content-title {
+      font-size: clamp(15px, 1.4vw, 20px); font-weight: 500;
+      letter-spacing: -0.02em; line-height: 1.25;
+      color: var(--white); margin-bottom: var(--s8);
+    }
+    .cap-content-desc {
+      font-size: var(--t-13); color: rgba(255,255,255,0.4);
+      line-height: 1.6; max-width: 36ch;
+    }
+    .cap-content-link { flex-shrink: 0; }
+
+    @media (max-width: 900px) {
+      .cap-accordion { height: auto; flex-direction: column; }
+      .cap-panel { flex: none; height: 72px; border-right: none; border-bottom: 1px solid var(--dark-border); }
+      .cap-panel:last-child { border-bottom: none; }
+      .cap-panel.is-active { height: 380px; }
+      .cap-label { bottom: auto; top: 50%; transform: translateY(-50%); right: auto; }
+      .cap-panel.is-active .cap-label { opacity: 0; }
+    }
 
     /* ─── 3. AGENTIC AI ──────────────────────────────────────── */
     .agentic-section { padding: var(--s112) 0; }
-    .agentic-inner {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: var(--s80); align-items: start;
+
+    /* ── Top row: heading + stats ── */
+    .agentic-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; gap: var(--s48);
+      padding-bottom: var(--s48);
     }
+    .agentic-heading-area { flex: 1; }
     .agentic-stats {
-      display: flex; gap: var(--s48);
-      margin-top: var(--s40);
-      padding-top: var(--s40);
-      border-top: 1px solid var(--dark-border);
+      display: flex; gap: var(--s48); flex-shrink: 0;
     }
     .agentic-stat-n {
-      font-size: var(--t-48); font-weight: 300;
-      letter-spacing: -0.04em; line-height: 1;
-      color: var(--white);
+      font-size: var(--t-80); font-weight: 300;
+      letter-spacing: -0.04em; line-height: 1; color: var(--white);
     }
     .agentic-stat-l {
       font-size: var(--t-12); font-weight: 500;
       letter-spacing: 0.06em; text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-      margin-top: var(--s8);
+      color: rgba(255,255,255,0.35); margin-top: var(--s8);
     }
-    .levers-title {
-      font-size: var(--t-12); font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: var(--s16);
+
+    /* ── Levers row ── */
+    .agentic-levers {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
     }
-    .lever-list { display: flex; flex-direction: column; gap: 1px; }
-    .lever {
-      padding: var(--s20) var(--s24);
-      background: rgba(255,255,255,0.04);
-      border-radius: 0;
-      border-left: 2px solid transparent;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .lever:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
-    .lever:last-child  { border-radius: 0 0 var(--r-md) var(--r-md); }
-    .lever:hover { border-left-color: var(--orange); background: rgba(255,255,255,0.07); }
-    .lever-name {
-      font-size: var(--t-15); font-weight: 600; color: var(--white);
-      margin-bottom: 4px;
-    }
-    .lever-desc { font-size: var(--t-13); color: rgba(255,255,255,0.38); line-height: 1.5; }
-    .agentic-link { margin-top: var(--s32); }
-    .agentic-video {
-      height: 130px; background: rgba(255,255,255,0.04);
-      border: 1px solid var(--dark-border); border-radius: var(--r-md);
-      display: flex; flex-direction: row;
-      align-items: center; justify-content: flex-start; gap: var(--s20);
-      padding: 0 var(--s28); margin-top: var(--s32); cursor: pointer;
+    .lever-col {
+      padding: var(--s32) var(--s28);
+      border-right: 1px solid var(--dark-border);
       transition: background 0.2s;
     }
-    .agentic-video:hover { background: rgba(255,255,255,0.07); }
+    .lever-col:first-child { padding-left: 0; }
+    .lever-col:last-child  { border-right: none; padding-right: 0; }
+    .lever-col:hover { background: rgba(255,255,255,0.03); }
+    .lever-num {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      color: var(--orange); margin-bottom: var(--s16);
+    }
+    .lever-name {
+      font-size: var(--t-15); font-weight: 600; color: var(--white);
+      line-height: 1.3; margin-bottom: var(--s8);
+    }
+    .lever-desc {
+      font-size: var(--t-13); color: rgba(255,255,255,0.38); line-height: 1.55;
+    }
+
+    /* ── Bottom row: video + CTA ── */
+    .agentic-bottom {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--s24); padding-top: var(--s40);
+    }
+    .agentic-video {
+      flex: 0 0 auto; background: #000;
+      border: 1px solid var(--dark-border); border-radius: var(--r-md);
+      display: flex; align-items: center; gap: var(--s20);
+      padding: 10px 20px 10px 10px; cursor: pointer; transition: border-color 0.2s;
+      overflow: hidden;
+    }
+    .agentic-video:hover { border-color: rgba(255,255,255,0.2); }
+    .agentic-thumb {
+      position: relative; flex-shrink: 0;
+      width: 160px; height: 90px; border-radius: 4px; overflow: hidden;
+    }
+    .agentic-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .agentic-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .agentic-video:hover .agentic-thumb-overlay { background: rgba(0,0,0,0.15); }
     .agentic-play {
-      width: 48px; height: 48px; border-radius: 50%;
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
       background: var(--orange); display: flex; align-items: center; justify-content: center;
       transition: transform 0.2s var(--spring), box-shadow 0.2s;
     }
-    .agentic-video:hover .agentic-play { transform: scale(1.1); box-shadow: 0 6px 24px rgba(240,90,40,0.35); }
-    .agentic-video-text { display: flex; flex-direction: column; gap: 5px; }
+    .agentic-video:hover .agentic-play { transform: scale(1.1); box-shadow: 0 6px 24px rgba(240,90,40,0.5); }
+    .agentic-video-text { display: flex; flex-direction: column; gap: 4px; }
     .agentic-video-title {
-      font-size: var(--t-15); font-weight: 600; color: rgba(255,255,255,0.75);
-      letter-spacing: -0.01em;
+      font-size: var(--t-15); font-weight: 600;
+      color: rgba(255,255,255,0.8); letter-spacing: -0.01em;
     }
     .agentic-video-label {
       font-size: var(--t-12); font-weight: 600; letter-spacing: 0.08em;
       text-transform: uppercase; color: rgba(255,255,255,0.28);
     }
+    .agentic-cta-pill {
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: var(--r-md);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: var(--t-14); font-weight: 500;
+      text-decoration: none; transition: border-color 0.18s, color 0.18s, background 0.18s;
+      white-space: nowrap;
+    }
+    .agentic-cta-pill:hover {
+      border-color: var(--orange); color: var(--white); background: rgba(240,90,40,0.08);
+    }
+
     @media (max-width: 1024px) {
-      .agentic-inner { grid-template-columns: 1fr; gap: var(--s56); }
+      .agentic-top { flex-direction: column; gap: var(--s32); }
+      .agentic-levers { grid-template-columns: repeat(2, 1fr); }
+      .lever-col { border-right: none; border-bottom: 1px solid var(--dark-border); padding-left: 0; }
+      .agentic-bottom { flex-direction: column; align-items: stretch; }
     }
 
     /* ─── 4. INDUSTRIES ──────────────────────────────────────── */
-    .ind-section { padding: var(--s112) 0; }
-    .ind-header { margin-bottom: var(--s48); }
-    .ind-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      column-gap: var(--s32);
+    /* ─── 4. INDUSTRIES ──────────────────────────────────────── */
+    .ind-section {
+      padding: var(--s112) 0 var(--s80);
+      position: relative; overflow: hidden;
+      background: var(--warm);
     }
-    .ind-card {
-      padding: var(--s24) 0;
-      border-top: 1.5px solid var(--border);
-      display: flex; flex-direction: column; gap: var(--s12);
-      transition: border-color 0.18s;
-      background: none; cursor: default;
+    .ind-section::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to bottom, var(--ink) 80%, transparent 100%);
+      transform: translateY(0);
+      transition: transform 1.1s cubic-bezier(0.76, 0, 0.24, 1);
+      pointer-events: none;
     }
-    .ind-card:hover { border-top-color: var(--orange); }
-    .ind-card:hover .ind-icon { color: var(--ink-2); }
-    .ind-card:hover .ind-name { color: var(--ink); }
-    .ind-icon { width: 28px; height: 28px; color: var(--ink-3); transition: color 0.18s; }
-    .ind-name { font-size: var(--t-15); font-weight: 600; color: var(--ink-2); letter-spacing: -0.01em; transition: color 0.18s; }
-    @media (max-width: 1024px) { .ind-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 600px)  { .ind-grid { grid-template-columns: repeat(2, 1fr); } }
+    .ind-section.theme-revealed::before { transform: translateY(-105%); }
+    .ind-section .wrap {
+      position: relative; z-index: 3;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.7s ease 0.45s, transform 0.7s ease 0.45s;
+    }
+    .ind-section.theme-revealed .wrap { opacity: 1; transform: translateY(0); }
+    .ind-header { margin-bottom: var(--s56); }
+
+    /* Marquee */
+    .ind-marquee-outer {
+      position: relative; z-index: 3;
+      overflow: hidden;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.7s ease 0.6s, transform 0.7s ease 0.6s;
+      -webkit-mask: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      mask: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+    .ind-section.theme-revealed .ind-marquee-outer { opacity: 1; transform: translateY(0); }
+    .ind-track {
+      display: flex; gap: 14px;
+      width: max-content;
+      animation: ind-scroll 36s linear infinite;
+      padding: 4px 0 12px;
+    }
+    .ind-track.paused { animation-play-state: paused; }
+    @keyframes ind-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ind-chip {
+      flex-shrink: 0; position: relative;
+      width: 260px; height: 160px;
+      border-radius: 14px; overflow: hidden; cursor: pointer;
+      transition: transform 0.3s var(--spring), box-shadow 0.3s;
+    }
+    .ind-chip:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.18); }
+    .ind-chip-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transition: transform 0.5s ease;
+    }
+    .ind-chip:hover .ind-chip-bg { transform: scale(1.04); }
+    .ind-chip-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%);
+    }
+    .ind-chip-name {
+      position: absolute; bottom: 18px; left: 20px; right: 40px;
+      font-size: 15px; font-weight: 600; color: #fff;
+      letter-spacing: -0.01em; line-height: 1.3;
+    }
+    .ind-chip-arrow {
+      position: absolute; top: 14px; right: 14px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.8);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .ind-chip:hover .ind-chip-arrow { opacity: 1; }
 
 
     /* ─── 6. PARTNERSHIPS ────────────────────────────────────── */
@@ -403,21 +611,26 @@
     }
     .partner-chip {
       font-size: var(--t-14); font-weight: 700; letter-spacing: 0.01em;
-      color: var(--ink-3); padding: 14px 32px;
+      color: var(--ink-3); padding: 0;
       border: 1px solid var(--border); border-radius: var(--r-md);
       background: var(--white); cursor: default;
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      min-width: 120px; transition: border-color 0.22s, box-shadow 0.22s, color 0.22s;
-      position: relative;
-    }
-    .partner-chip .chip-name { transition: opacity 0.22s, transform 0.22s; }
-    .partner-chip .chip-logo {
-      opacity: 0; max-height: 0; overflow: hidden;
-      transition: opacity 0.22s, max-height 0.22s;
       display: flex; align-items: center; justify-content: center;
+      min-width: 140px; height: 72px;
+      transition: border-color 0.22s, box-shadow 0.22s;
+      position: relative; overflow: hidden;
     }
-    .partner-chip:hover .chip-name { opacity: 0.5; }
-    .partner-chip:hover .chip-logo { opacity: 1; max-height: 40px; }
+    .partner-chip .chip-name {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.22s;
+    }
+    .partner-chip .chip-logo {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.22s;
+    }
+    .partner-chip:hover .chip-name { opacity: 0; }
+    .partner-chip:hover .chip-logo { opacity: 1; }
     .partner-chip.p-aws:hover    { border-color: #FF9900; box-shadow: 0 4px 20px rgba(255,153,0,0.12); }
     .partner-chip.p-db:hover     { border-color: #FF3621; box-shadow: 0 4px 20px rgba(255,54,33,0.12); }
     .partner-chip.p-gcp:hover    { border-color: #4285F4; box-shadow: 0 4px 20px rgba(66,133,244,0.12); }
@@ -425,17 +638,19 @@
     .partner-chip.p-snow:hover   { border-color: #29B5E8; box-shadow: 0 4px 20px rgba(41,181,232,0.12); }
 
     /* ─── 7. IMPACT ──────────────────────────────────────────── */
-    .impact-section { padding: var(--s112) 0; }
+    .impact-section { padding: var(--s112) 0; background: var(--ink); }
+    .impact-section .h-section { color: var(--white); }
+    .impact-section .pill-label { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
     .impact-header { margin-bottom: var(--s56); }
     .impact-grid {
       display: grid; grid-template-columns: repeat(3, 1fr);
       gap: var(--s16);
     }
     .impact-card {
-      background: var(--white); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border);
       border-radius: var(--r-xl); padding: var(--s40) var(--s32);
       display: flex; flex-direction: column;
-      transition: box-shadow 0.22s, transform 0.22s;
+      transition: box-shadow 0.22s, transform 0.22s, background 0.22s;
       position: relative; overflow: hidden;
     }
     .impact-card::after {
@@ -444,20 +659,28 @@
       transform: scaleX(0); transform-origin: left;
       transition: transform 0.3s var(--ease);
     }
-    .impact-card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); transform: translateY(-2px); }
+    .impact-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-2px); }
     .impact-card:hover::after { transform: scaleX(1); }
     .impact-tag { margin-bottom: var(--s16); }
+    .impact-tag .label-upper { color: rgba(255,255,255,0.35); }
     .impact-num {
       font-size: var(--t-48); font-weight: 300;
       letter-spacing: -0.05em; line-height: 1;
-      color: var(--ink); margin-bottom: var(--s16);
+      color: var(--white); margin-bottom: var(--s16);
     }
-    .impact-desc { font-size: var(--t-15); color: var(--ink-2); line-height: 1.6; flex: 1; }
+    .impact-desc { font-size: var(--t-15); color: rgba(255,255,255,0.55); line-height: 1.6; flex: 1; }
     .impact-link { margin-top: var(--s24); }
+    .impact-link .btn-text { color: rgba(255,255,255,0.5); }
+    .impact-link .btn-text:hover { color: var(--white); }
     @media (max-width: 900px)  { .impact-grid { grid-template-columns: 1fr; } }
 
     /* ─── 8. WE ARE STRAIVE ──────────────────────────────────── */
-    .about-section { padding: var(--s112) 0; }
+    .about-section { padding: var(--s112) 0; background: var(--ink); }
+    .about-section .h-section { color: var(--white); }
+    .about-section .body-lg { color: rgba(255,255,255,0.5); }
+    .about-section .pill-label { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+    .about-section .btn-ghost { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
+    .about-section .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
     .about-inner {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: var(--s80); align-items: start;
@@ -466,50 +689,62 @@
     .pillar {
       display: flex; align-items: center; gap: var(--s20);
       padding: var(--s20) var(--s24);
-      background: var(--white); border-left: 2px solid var(--border);
-      transition: border-color 0.2s;
+      background: rgba(255,255,255,0.03); border-left: 2px solid var(--dark-border);
+      transition: border-color 0.2s, background 0.2s;
     }
     .pillar:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
     .pillar:last-child  { border-radius: 0 0 var(--r-md) var(--r-md); }
-    .pillar:hover { border-left-color: var(--orange); }
+    .pillar:hover { border-left-color: var(--orange); background: rgba(255,255,255,0.06); }
     .pillar-n {
       font-size: var(--t-32); font-weight: 300;
-      letter-spacing: -0.04em; color: var(--border);
+      letter-spacing: -0.04em; color: rgba(255,255,255,0.15);
       line-height: 1; min-width: 44px;
     }
-    .pillar-t { font-size: var(--t-16); font-weight: 600; color: var(--ink); }
-    /* Ramp-style stat grid */
+    .pillar-t { font-size: var(--t-16); font-weight: 600; color: rgba(255,255,255,0.75); }
+    /* Stat grid */
     .stats-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: var(--s12);
     }
     .stat-card {
-      background: var(--white); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border);
       border-radius: var(--r-xl); padding: var(--s32) var(--s28);
-      transition: box-shadow 0.2s;
+      transition: background 0.2s;
     }
-    .stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .stat-card:hover { background: rgba(255,255,255,0.07); }
     .stat-n {
       font-size: var(--t-48); font-weight: 300;
       letter-spacing: -0.05em; line-height: 1;
-      color: var(--ink);
+      color: var(--white);
     }
     .stat-u {
       font-size: var(--t-12); font-weight: 600;
       letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--ink-2); margin-top: var(--s8);
+      color: rgba(255,255,255,0.35); margin-top: var(--s8);
     }
-    .stat-l { font-size: var(--t-13); color: var(--ink-3); margin-top: var(--s4); }
+    .stat-l { font-size: var(--t-13); color: rgba(255,255,255,0.3); margin-top: var(--s4); }
     @media (max-width: 1024px) { .about-inner { grid-template-columns: 1fr; gap: var(--s48); } }
 
     /* ─── 9. AWARDS ──────────────────────────────────────────── */
-    .awards-section { padding: var(--s112) 0; }
+    .awards-section { padding: var(--s112) 0; overflow: hidden; }
     .awards-header { margin-bottom: var(--s56); }
-    .awards-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: var(--s12);
+    .awards-track-wrap {
+      overflow: hidden;
+      -webkit-mask: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      mask: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+    .awards-track {
+      display: flex; gap: var(--s12);
+      width: max-content;
+      animation: awards-scroll 36s linear infinite;
+    }
+    .awards-track.paused { animation-play-state: paused; }
+    @keyframes awards-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
     .award-card {
+      flex-shrink: 0; width: 280px;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--dark-border);
       border-radius: var(--r-xl); padding: var(--s28) var(--s24);
@@ -522,67 +757,154 @@
       color: rgba(255,255,255,0.25); margin-bottom: var(--s12);
     }
     .award-title { font-size: var(--t-14); font-weight: 500; color: rgba(255,255,255,0.7); line-height: 1.45; }
-    @media (max-width: 900px) { .awards-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* ─── 10. THOUGHT LEADERSHIP ─────────────────────────────── */
-    .thought-section { padding: var(--s112) 0; }
+    .thought-section { padding: var(--s112) 0; background: var(--ink); }
+    .thought-section .h-section { color: var(--white); }
     .thought-header {
-      display: flex; align-items: flex-end;
-      justify-content: space-between; flex-wrap: wrap;
-      gap: var(--s24); margin-bottom: var(--s56);
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--s24); margin-bottom: var(--s48);
     }
-    .thought-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s16); }
-    .thought-card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--r-xl); overflow: hidden;
-      transition: box-shadow 0.22s, transform 0.22s;
-    }
-    .thought-card:hover { box-shadow: 0 6px 32px rgba(0,0,0,0.07); transform: translateY(-3px); }
-    .thought-thumb {
-      height: 156px; background: var(--warm-2);
+    .thought-nav { display: flex; gap: 10px; flex-shrink: 0; margin-top: 6px; }
+    .thought-nav-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15); background: transparent;
       display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.18s, border-color 0.18s;
+      color: rgba(255,255,255,0.6);
     }
-    .thought-thumb svg { color: #d0cfc8; }
-    .thought-body { padding: var(--s28) var(--s24); }
-    .thought-type { margin-bottom: var(--s12); }
-    .thought-title { font-size: var(--t-16); font-weight: 600; color: var(--ink); line-height: 1.4; letter-spacing: -0.01em; }
-    .thought-link { margin-top: var(--s20); }
-    @media (max-width: 900px) { .thought-grid { grid-template-columns: 1fr; } }
+    .thought-nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); color: #fff; }
+    .thought-nav-btn:disabled { opacity: 0.2; cursor: default; }
+    .thought-nav-btn svg { pointer-events: none; }
+
+    .thought-carousel-wrap { position: relative; overflow: hidden; }
+    .thought-carousel {
+      display: flex; gap: 16px;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      will-change: transform;
+    }
+    .thought-card {
+      background: transparent;
+      flex: 0 0 calc((100% - 32px) / 3);
+      min-width: 0;
+    }
+    .thought-img {
+      position: relative; height: 273px; overflow: hidden;
+      border-radius: 12px;
+    }
+    .thought-img img, .thought-img-bg {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+    .thought-img-bg { background: #1a1a1a; }
+    .thought-img-bg.g1 { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 50%, #533483 100%); }
+    .thought-img-bg.g2 { background: linear-gradient(135deg, #0d1b2a 0%, #1b4332 60%, #2d6a4f 100%); }
+    .thought-cat-tag {
+      position: absolute; top: 14px; left: 14px;
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      color: #fff; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 4px;
+    }
+    .thought-body { padding: 16px 4px 24px; background: transparent; }
+    .thought-date {
+      font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+    .thought-title {
+      font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.8);
+      line-height: 1.45; letter-spacing: -0.01em;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .thought-arrow { flex-shrink: 0; margin-top: 1px; color: rgba(255,255,255,0.4); }
+
+    .thought-dots { display: flex; gap: 8px; justify-content: center; margin-top: var(--s32); }
+    .thought-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .thought-dot.active { background: var(--white); transform: scale(1.2); }
+
+    @media (max-width: 900px) {
+      .thought-card { flex: 0 0 calc(100% - 40px); }
+    }
 
     /* ─── 11. CULTURE ────────────────────────────────────────── */
-    .culture-section { padding: var(--s112) 0; }
-    .culture-inner {
-      display: grid; grid-template-columns: 1fr 1.1fr;
-      gap: var(--s80); align-items: center;
+    /* ─── 11–12. CAREERS + CTA COMBINED ────────────────────────── */
+    .cc-section {
+      background: #EBEBEA;
+      padding: 40px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
     }
-    .culture-tags { display: flex; flex-wrap: wrap; gap: var(--s8); margin-top: var(--s32); }
-    .ctag {
-      font-size: var(--t-13); font-weight: 500; color: var(--ink-2);
-      background: var(--warm-2); border: 1px solid var(--border);
-      padding: 7px 16px; border-radius: var(--r-full);
-      transition: all 0.18s;
+    .cc-card {
+      border-radius: 16px; padding: 40px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 420px; position: relative; overflow: hidden;
     }
-    .ctag:hover { color: var(--ink); border-color: #c0c0c0; }
-    .culture-cta { margin-top: var(--s40); }
-    .culture-img {
-      aspect-ratio: 4/3; border-radius: var(--r-xl);
-      background: var(--warm-2); border: 1px solid var(--border);
+    .cc-left { background: #F8F7F4; }
+    .cc-right { background: var(--ink); }
+    .cc-card-arrow {
+      position: absolute; top: 24px; right: 24px;
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
       display: flex; align-items: center; justify-content: center;
+      color: var(--ink-3); background: transparent;
+      transition: background 0.18s;
     }
-    .culture-img svg { color: #d0cfc8; }
-    @media (max-width: 1024px) { .culture-inner { grid-template-columns: 1fr; gap: var(--s40); } }
-
-    /* ─── 12. FINAL CTA ──────────────────────────────────────── */
-    .cta-section { padding: var(--s112) 0; text-align: center; }
-    .cta-rule { width: 40px; height: 2px; background: var(--orange); margin: 0 auto var(--s40); }
-    .cta-h2 {
-      font-size: var(--t-64); font-weight: 300;
-      letter-spacing: -0.04em; line-height: 1.05;
-      color: var(--white); max-width: 20ch; margin: 0 auto var(--s40);
+    .cc-right .cc-card-arrow { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); }
+    .cc-card-arrow:hover { background: rgba(0,0,0,0.05); }
+    .cc-right .cc-card-arrow:hover { background: rgba(255,255,255,0.08); }
+    .cc-card-top { display: flex; flex-direction: column; gap: 16px; }
+    .cc-eyebrow {
+      display: inline-flex; align-self: flex-start;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink-3);
+      background: rgba(0,0,0,0.06); padding: 5px 12px; border-radius: 100px;
+    }
+    .cc-right .cc-eyebrow { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.45); }
+    .cc-heading {
+      font-size: clamp(1.6rem, 2.2vw, 2.4rem); font-weight: 300;
+      letter-spacing: -0.03em; line-height: 1.15; color: var(--ink);
+    }
+    .cc-heading span { color: #999; }
+    .cc-right .cc-heading { color: #fff; }
+    .cc-right .cc-heading span { color: rgba(255,255,255,0.4); }
+    .cc-desc {
+      font-size: 14px; color: var(--ink-3); line-height: 1.65; max-width: 40ch;
+    }
+    .cc-right .cc-desc { color: rgba(255,255,255,0.45); }
+    .culture-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .ctag {
+      font-size: 12px; font-weight: 500; color: var(--ink-2);
+      background: transparent; border: 1px solid rgba(0,0,0,0.14);
+      padding: 5px 14px; border-radius: 100px;
+      transition: all 0.18s; display: inline-flex; align-self: flex-start;
+    }
+    .ctag:hover { background: rgba(0,0,0,0.05); }
+    .cc-card-bottom { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+    .cc-right .btn-primary { margin-top: 0; }
+    @media (max-width: 1024px) {
+      .cc-section { grid-template-columns: 1fr; padding: 24px; }
+      .cc-card { min-height: 360px; }
     }
 
     /* ─── 13. CONTACT FORM ───────────────────────────────────── */
-    .contact-section { padding: var(--s112) 0; }
+    .contact-section {
+      padding: var(--s112) 0 160px;
+      position: relative;
+      background: #0A0808;
+    }
+    .contact-section::after {
+      content: ''; pointer-events: none;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 200px;
+      background: linear-gradient(to bottom, transparent 0%, #060d14 100%);
+    }
+    .contact-section .h-section { color: var(--white); }
+    /* WCAG AA: body text ≥ 4.5:1 on #0C0C10 → rgba(255,255,255,0.72) ≈ 7:1 */
+    .contact-section .body-lg { color: rgba(255,255,255,0.72); }
     .contact-inner {
       display: grid; grid-template-columns: 1fr 1.5fr;
       gap: var(--s80); align-items: start;
@@ -590,9 +912,32 @@
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s12); }
     .form-field { display: flex; flex-direction: column; gap: 6px; }
     .form-field.span2 { grid-column: span 2; }
+    /* WCAG AA: label contrast ≥ 4.5:1 → rgba(255,255,255,0.72) passes */
+    .contact-section label {
+      font-size: var(--t-12); font-weight: 600;
+      letter-spacing: 0.04em; color: rgba(255,255,255,0.72);
+    }
     label {
       font-size: var(--t-12); font-weight: 600;
       letter-spacing: 0.04em; color: var(--ink-2);
+    }
+    .contact-section input, .contact-section textarea {
+      font-family: var(--font); font-size: var(--t-15);
+      /* white text on dark bg = passes WCAG */
+      color: #fff; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18); border-radius: var(--r-md);
+      padding: 11px 16px; outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    /* Placeholder: informational only, not relied upon for meaning */
+    .contact-section input::placeholder, .contact-section textarea::placeholder {
+      color: rgba(255,255,255,0.38);
+    }
+    /* Visible focus ring: 3px solid offset satisfies WCAG 2.1 §2.4.7 */
+    .contact-section input:focus, .contact-section textarea:focus {
+      border-color: rgba(255,255,255,0.6);
+      box-shadow: 0 0 0 3px rgba(240, 90, 40, 0.45);
+      outline: 2px solid transparent; /* removes default UA outline, replaced by box-shadow */
     }
     input, textarea {
       font-family: var(--font); font-size: var(--t-15);
@@ -605,57 +950,124 @@
       border-color: var(--ink); box-shadow: 0 0 0 3px rgba(12,12,16,0.06);
     }
     textarea { resize: vertical; min-height: 110px; }
-    .form-submit { margin-top: var(--s4); }
+    .form-submit { margin-top: var(--s4); display: flex; align-items: flex-start; }
     @media (max-width: 1024px) { .contact-inner { grid-template-columns: 1fr; gap: var(--s40); } }
     @media (max-width: 600px)  { .form-grid { grid-template-columns: 1fr; } .form-field.span2 { grid-column: span 1; } }
 
-    /* ─── FOOTER ─────────────────────────────────────────────── */
-    .footer { background: var(--dark-2); padding: var(--s80) 0 var(--s48); }
+    /* ─── NEWSLETTER + FOOTER ───────────────────────────────────── */
+    .footer {
+      position: relative; overflow: hidden;
+      background: #060d14;
+      padding: 0 40px 40px;
+    }
+    .footer-bg {
+      position: absolute; inset: 0;
+      background: url('Assets/shubham-dhage-QhzCpzYSfqw-unsplash.jpg') center 30% / cover no-repeat;
+      opacity: 0.72;
+    }
+    .footer-bg-fade {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(6,13,20,0.22) 0%,
+        rgba(6,13,20,0.08) 35%,
+        rgba(6,13,20,0.55) 75%,
+        rgba(6,13,20,0.72) 100%);
+    }
+    /* Newsletter area */
+    .newsletter-area {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 120px 40px 80px;
+      max-width: var(--wrap); margin: 0 auto;
+    }
+    .newsletter-h {
+      font-size: var(--t-64);
+      font-weight: 300; color: #fff;
+      letter-spacing: -0.04em; line-height: 1.05;
+      margin-bottom: 48px;
+    }
+    .newsletter-form {
+      display: inline-flex; align-items: center;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px; padding: 6px 6px 6px 24px;
+      gap: 8px;
+    }
+    .newsletter-input {
+      background: transparent; border: none; outline: none;
+      color: #fff; font-family: var(--font); font-size: 15px;
+      width: 260px; padding: 10px 0;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.45); }
+    .newsletter-btn {
+      background: #fff; color: var(--ink);
+      border: none; border-radius: 100px;
+      padding: 12px 28px; font-family: var(--font);
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.18s, color 0.18s;
+      white-space: nowrap;
+    }
+    .newsletter-btn:hover { background: var(--orange); color: #fff; }
+    /* Footer glass card */
+    .footer-glass {
+      position: relative; z-index: 1;
+      max-width: var(--wrap); margin: 0 auto;
+      background: rgba(10,14,22,0.52);
+      backdrop-filter: blur(28px) saturate(1.6);
+      -webkit-backdrop-filter: blur(28px) saturate(1.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 48px 52px 36px;
+    }
     .footer-top {
-      display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
-      gap: var(--s48); padding-bottom: var(--s64);
-      border-bottom: 1px solid var(--dark-border);
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+      gap: 40px; padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .footer-logo {
-      font-size: 18px; font-weight: 700; letter-spacing: -0.04em;
-      color: var(--white); margin-bottom: var(--s16);
+      margin-bottom: 14px;
     }
+    .footer-logo img { height: 26px; opacity: 0.9; filter: brightness(0) invert(1); }
     .footer-tag {
-      font-size: var(--t-13); color: rgba(255,255,255,0.28);
-      line-height: 1.65; max-width: 22ch; margin-bottom: var(--s24);
+      font-size: 13px; color: rgba(255,255,255,0.4);
+      line-height: 1.7; max-width: 22ch; margin-bottom: 24px;
     }
-    .footer-socials { display: flex; gap: var(--s8); }
+    .footer-socials { display: flex; gap: 8px; }
     .fsocial {
-      width: 32px; height: 32px; border-radius: var(--r-sm);
-      border: 1px solid var(--dark-border);
+      width: 32px; height: 32px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.12);
       display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.3); transition: all 0.18s;
+      color: rgba(255,255,255,0.35); transition: all 0.18s;
     }
-    .fsocial:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+    .fsocial:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
     .footer-col-h {
-      font-size: var(--t-11); font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(255,255,255,0.35); margin-bottom: var(--s20);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 18px;
     }
-    .footer-links { display: flex; flex-direction: column; gap: var(--s12); }
-    .footer-links a { font-size: var(--t-13); color: rgba(255,255,255,0.28); transition: color 0.18s; }
-    .footer-links a:hover { color: rgba(255,255,255,0.75); }
+    .footer-links { display: flex; flex-direction: column; gap: 11px; list-style: none; padding: 0; margin: 0; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.55); transition: color 0.18s; text-decoration: none; }
+    .footer-links a:hover { color: rgba(255,255,255,0.95); }
     .footer-bottom {
-      padding-top: var(--s32);
+      padding-top: 28px;
       display: flex; align-items: center;
-      justify-content: space-between; flex-wrap: wrap; gap: var(--s16);
+      justify-content: space-between; flex-wrap: wrap; gap: 16px;
     }
-    .footer-subs { display: flex; align-items: center; gap: var(--s8); flex-wrap: wrap; }
+    .footer-subs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .fsub {
-      font-size: var(--t-12); font-weight: 600; color: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.07);
-      padding: 5px 12px; border-radius: var(--r-sm);
+      font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 4px 12px; border-radius: 4px;
+      letter-spacing: 0.02em;
     }
-    .footer-legal { display: flex; gap: var(--s24); flex-wrap: wrap; }
-    .footer-legal a { font-size: var(--t-12); color: rgba(255,255,255,0.2); transition: color 0.18s; }
-    .footer-legal a:hover { color: rgba(255,255,255,0.5); }
-    .footer-copy { font-size: var(--t-12); color: rgba(255,255,255,0.18); }
-    @media (max-width: 1024px) { .footer-top { grid-template-columns: 1fr 1fr; gap: var(--s32); } }
+    .footer-legal { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-legal a { font-size: 11px; color: rgba(255,255,255,0.22); transition: color 0.18s; text-decoration: none; }
+    .footer-legal a:hover { color: rgba(255,255,255,0.55); }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.2); }
+    @media (max-width: 1024px) { .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; } }
     @media (max-width: 600px)  { .footer-bottom { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
@@ -665,15 +1077,17 @@
 <header>
   <nav class="nav" id="nav" aria-label="Primary navigation">
     <div class="nav-inner">
-      <a href="/" class="nav-logo">Straive</a>
-      <ul class="nav-links">
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Industries</a></li>
-        <li><a href="#">Resource Library</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Careers</a></li>
-      </ul>
-      <a href="#contact" class="btn btn-primary">Contact Us</a>
+      <a href="/" class="nav-logo"><img src="Assets/straive-logo.webp" alt="Straive" height="28"></a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Industries</a></li>
+          <li><a href="#">Resource Library</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Contact Us</a>
+      </div>
     </div>
   </nav>
 </header>
@@ -681,207 +1095,245 @@
 <main>
 
 <!-- ── 1. HERO ───────────────────────────────────────────────── -->
-<section class="hero section-light" aria-label="Hero">
-  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+<section class="hero" aria-label="Hero">
+  <img class="hero-video" src="Assets/AdobeStock_1291857457.jpeg" alt="" aria-hidden="true">
+  <div class="hero-overlay"></div>
   <div class="hero-inner">
-    <h1 class="hero-h1">We Operationalize Data Analytics &amp; AI For Global Enterprises.</h1>
-    <p class="hero-sub">Turning complex data into autonomous, intelligent actions that drive measurable ROI at enterprise scale.</p>
-    <div class="hero-cta">
-      <a href="#contact" class="btn btn-primary">
-        Contact Us
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
+    <div class="hero-left">
+      <h1 class="hero-h1">We Operationalize Data Analytics &amp; AI For Global Enterprises.</h1>
+    </div>
+    <div class="hero-right">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-arrow">↳</span>
+        <span>Turning complex data into autonomous, intelligent actions that drive measurable ROI at enterprise scale.</span>
+      </div>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-ghost-white">Book A Demo</a>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ── 2. CAPABILITIES ───────────────────────────────────────── -->
-<section class="cap-section section-warm" aria-labelledby="cap-h">
-  <div class="wrap">
-    <div class="cap-header r">
-      <div class="pill-label">What We Do</div>
-      <h2 class="h-section" id="cap-h">Explore Our Capabilities</h2>
+<section class="cap-section section-dark" aria-labelledby="cap-h">
+  <div class="cap-header r">
+    <div class="pill-label pill-label-dark">What We Do</div>
+    <h2 class="h-section-white" id="cap-h">Explore Our Capabilities</h2>
+  </div>
+
+  <div class="cap-accordion" id="capAccordion">
+
+    <!-- Panel 1: Data Management -->
+    <div class="cap-panel is-active" data-index="0">
+      <div class="cap-bg"></div>
+      <svg class="cap-illus" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+        <rect x="20" y="40" width="220" height="28" rx="4" stroke="currentColor" stroke-width="8"/>
+        <rect x="20" y="84" width="170" height="28" rx="4" stroke="currentColor" stroke-width="8"/>
+        <rect x="20" y="128" width="120" height="28" rx="4" stroke="currentColor" stroke-width="8"/>
+        <rect x="20" y="172" width="80" height="28" rx="4" stroke="currentColor" stroke-width="8"/>
+        <circle cx="218" cy="172" r="22" stroke="currentColor" stroke-width="8"/>
+        <path d="M208 172h20M218 162v20" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      <div class="cap-content">
+        <div class="cap-content-body">
+          <span class="cap-index">01</span>
+          <h3 class="cap-content-title">Data Management</h3>
+          <p class="cap-content-desc">Achieve seamless, secure, and actionable data flow across the organization, empowering strategic decision-making and operational efficiency.</p>
+        </div>
+        <div class="cap-content-link">
+          <a href="#" class="btn btn-primary">LEARN MORE</a>
+        </div>
+      </div>
+      <span class="cap-label">Data<br>Management</span>
     </div>
-    <div class="cap-bento">
 
-      <article class="cap-card r d1">
-        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
-          <rect x="3" y="7" width="32" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
-          <rect x="3" y="17" width="24" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
-          <rect x="3" y="27" width="16" height="5" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="33" cy="29.5" r="3.5" stroke="currentColor" stroke-width="1.6"/>
-        </svg>
-        <h3 class="h-card">Data Management</h3>
-        <p class="body-md" style="margin-top:8px">Achieve seamless, secure, and actionable data flow across the organisation.</p>
-      </article>
-
-      <article class="cap-card r d2">
-        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
-          <path d="M4 30 L10 20 L16 24 L22 12 L28 18 L34 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="34" cy="7" r="2.5" fill="currentColor"/>
-        </svg>
-        <h3 class="h-card">Insights &amp; Analytics</h3>
-        <p class="body-md" style="margin-top:8px">Transform data into actionable insights that drive smarter decisions.</p>
-      </article>
-
-      <article class="cap-card r d3">
-        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
-          <circle cx="19" cy="19" r="6" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="7" cy="11" r="2.8" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="31" cy="11" r="2.8" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="7" cy="27" r="2.8" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="31" cy="27" r="2.8" stroke="currentColor" stroke-width="1.6"/>
-          <line x1="9.8" y1="12.5" x2="14.5" y2="16" stroke="currentColor" stroke-width="1.3"/>
-          <line x1="28.2" y1="12.5" x2="23.5" y2="16" stroke="currentColor" stroke-width="1.3"/>
-          <line x1="9.8" y1="25.5" x2="14.5" y2="22" stroke="currentColor" stroke-width="1.3"/>
-          <line x1="28.2" y1="25.5" x2="23.5" y2="22" stroke="currentColor" stroke-width="1.3"/>
-        </svg>
-        <h3 class="h-card">AI Design &amp; Deployment</h3>
-        <p class="body-md" style="margin-top:8px">Build intelligent, scalable AI solutions that enhance business agility.</p>
-      </article>
-
-      <article class="cap-card r d4">
-        <svg class="cap-card-icon" viewBox="0 0 38 38" fill="none" aria-hidden="true">
-          <rect x="3" y="3" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/>
-          <rect x="21" y="3" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/>
-          <rect x="3" y="21" width="13" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M21 28h14M28 21v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <h3 class="h-card">Product Engg. &amp; Expert-In-The-Loop Ops</h3>
-        <p class="body-md" style="margin-top:8px">Accelerate product innovation with seamless expert-driven operations.</p>
-      </article>
-
+    <!-- Panel 2: Insights & Analytics -->
+    <div class="cap-panel" data-index="1">
+      <div class="cap-bg"></div>
+      <svg class="cap-illus" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+        <polyline points="20,200 60,140 100,165 140,90 180,120 220,50" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="220" cy="50" r="10" fill="currentColor"/>
+        <circle cx="140" cy="90" r="8" fill="currentColor"/>
+        <circle cx="60" cy="140" r="8" fill="currentColor"/>
+        <line x1="20" y1="220" x2="240" y2="220" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line x1="20" y1="20" x2="20" y2="220" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div class="cap-content">
+        <div class="cap-content-body">
+          <span class="cap-index">02</span>
+          <h3 class="cap-content-title">Insights &amp; Analytics</h3>
+          <p class="cap-content-desc">Transform data into actionable insights that drive smarter decisions, enhance customer experiences, and fuel business growth.</p>
+        </div>
+        <div class="cap-content-link">
+          <a href="#" class="btn btn-primary">LEARN MORE</a>
+        </div>
+      </div>
+      <span class="cap-label">Insights &amp;<br>Analytics</span>
     </div>
+
+    <!-- Panel 3: AI Design & Deployment -->
+    <div class="cap-panel" data-index="2">
+      <div class="cap-bg"></div>
+      <svg class="cap-illus" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+        <circle cx="130" cy="130" r="30" stroke="currentColor" stroke-width="7"/>
+        <circle cx="40" cy="70"  r="16" stroke="currentColor" stroke-width="6"/>
+        <circle cx="220" cy="70"  r="16" stroke="currentColor" stroke-width="6"/>
+        <circle cx="40" cy="190" r="16" stroke="currentColor" stroke-width="6"/>
+        <circle cx="220" cy="190" r="16" stroke="currentColor" stroke-width="6"/>
+        <circle cx="130" cy="30"  r="14" stroke="currentColor" stroke-width="6"/>
+        <circle cx="130" cy="230" r="14" stroke="currentColor" stroke-width="6"/>
+        <line x1="55" y1="78"  x2="103" y2="110" stroke="currentColor" stroke-width="4"/>
+        <line x1="205" y1="78"  x2="157" y2="110" stroke="currentColor" stroke-width="4"/>
+        <line x1="55" y1="182" x2="103" y2="150" stroke="currentColor" stroke-width="4"/>
+        <line x1="205" y1="182" x2="157" y2="150" stroke="currentColor" stroke-width="4"/>
+        <line x1="130" y1="44"  x2="130" y2="100" stroke="currentColor" stroke-width="4"/>
+        <line x1="130" y1="160" x2="130" y2="216" stroke="currentColor" stroke-width="4"/>
+      </svg>
+      <div class="cap-content">
+        <div class="cap-content-body">
+          <span class="cap-index">03</span>
+          <h3 class="cap-content-title">AI Design &amp; Deployment</h3>
+          <p class="cap-content-desc">Build with intelligent, scalable AI solutions that enhance business agility and drive measurable impact across critical functions.</p>
+        </div>
+        <div class="cap-content-link">
+          <a href="#" class="btn btn-primary">LEARN MORE</a>
+        </div>
+      </div>
+      <span class="cap-label">AI Design &amp;<br>Deployment</span>
+    </div>
+
+    <!-- Panel 4: Product Engg. -->
+    <div class="cap-panel" data-index="3">
+      <div class="cap-bg"></div>
+      <svg class="cap-illus" viewBox="0 0 260 260" fill="none" aria-hidden="true">
+        <rect x="20"  y="20"  width="96" height="96" rx="6" stroke="currentColor" stroke-width="7"/>
+        <rect x="144" y="20"  width="96" height="96" rx="6" stroke="currentColor" stroke-width="7"/>
+        <rect x="20"  y="144" width="96" height="96" rx="6" stroke="currentColor" stroke-width="7"/>
+        <path d="M144 192h96M192 144v96" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <line x1="116" y1="68"  x2="144" y2="68"  stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <line x1="68"  y1="116" x2="68"  y2="144" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <div class="cap-content">
+        <div class="cap-content-body">
+          <span class="cap-index">04</span>
+          <h3 class="cap-content-title">Product Engg. &amp; Expert-In-The-Loop Ops</h3>
+          <p class="cap-content-desc">Accelerate product innovation and quality with seamless expert-driven operations that enhance AI precision and business outcomes.</p>
+        </div>
+        <div class="cap-content-link">
+          <a href="#" class="btn btn-primary">LEARN MORE</a>
+        </div>
+      </div>
+      <span class="cap-label">Product Engg. &amp;<br>Expert-In-The-Loop</span>
+    </div>
+
   </div>
 </section>
 
 <!-- ── 3. AGENTIC AI ─────────────────────────────────────────── -->
 <section class="agentic-section section-dark" aria-labelledby="agentic-h">
   <div class="wrap">
-    <div class="agentic-inner">
 
-      <div class="r">
+    <!-- Top row: heading + stats -->
+    <div class="agentic-top r">
+      <div class="agentic-heading-area">
         <div class="pill-label pill-label-dark">Agentic AI</div>
-        <h2 class="h-section-white" id="agentic-h">Agentic AI for Scalable Intelligence</h2>
-        <div class="agentic-stats">
-          <div>
-            <div class="agentic-stat-n">80+</div>
-            <div class="agentic-stat-l">Enterprise Engagements</div>
-          </div>
-          <div>
-            <div class="agentic-stat-n">5K+</div>
-            <div class="agentic-stat-l">AI Experts</div>
-          </div>
+        <h2 class="h-section-white" id="agentic-h">Agentic AI for<br>Scalable Intelligence</h2>
+      </div>
+      <div class="agentic-stats">
+        <div>
+          <div class="agentic-stat-n">80+</div>
+          <div class="agentic-stat-l">Enterprise<br>Engagements</div>
         </div>
-        <div class="agentic-video" role="button" aria-label="Play LLM Foundry Playground video">
-          <div class="agentic-play">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <path d="M6 4l9 5-9 5V4z" fill="white"/>
-            </svg>
-          </div>
-          <div class="agentic-video-text">
-            <span class="agentic-video-title">LLM Foundry Playground</span>
-            <span class="agentic-video-label">Watch Overview</span>
-          </div>
-        </div>
-        <div class="agentic-link">
-          <a href="#" class="btn btn-text btn-text-dark">
-            Learn More
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
+        <div>
+          <div class="agentic-stat-n">5K+</div>
+          <div class="agentic-stat-l">AI<br>Experts</div>
         </div>
       </div>
-
-      <div class="r d1">
-        <p class="levers-title">Our Core Levers</p>
-        <div class="lever-list">
-          <div class="lever"><div class="lever-name">LLM Foundry</div><div class="lever-desc">60% faster cycles. 7-day PoC creation.</div></div>
-          <div class="lever"><div class="lever-name">Enterprise Security</div><div class="lever-desc">Governed, compliant, bias-free AI.</div></div>
-          <div class="lever"><div class="lever-name">Seamless Integration</div><div class="lever-desc">Future-proof across ERP, CRM &amp; cloud.</div></div>
-          <div class="lever"><div class="lever-name">Multi-Modal Agents</div><div class="lever-desc">Text, audio, video, image &amp; documents.</div></div>
-          <div class="lever"><div class="lever-name">Reusable Accelerators</div><div class="lever-desc">Industry agents &amp; solution libraries.</div></div>
-        </div>
-      </div>
-
     </div>
+
+    <!-- Levers: horizontal 5-column grid -->
+    <div class="agentic-levers r d1">
+      <div class="lever-col">
+        <div class="lever-num">01</div>
+        <div class="lever-name">LLM Foundry</div>
+        <div class="lever-desc">60% faster cycles. 7-day PoC creation.</div>
+      </div>
+      <div class="lever-col">
+        <div class="lever-num">02</div>
+        <div class="lever-name">Enterprise Security</div>
+        <div class="lever-desc">Governed, compliant, bias-free AI.</div>
+      </div>
+      <div class="lever-col">
+        <div class="lever-num">03</div>
+        <div class="lever-name">Seamless Integration</div>
+        <div class="lever-desc">Future-proof across ERP, CRM &amp; cloud.</div>
+      </div>
+      <div class="lever-col">
+        <div class="lever-num">04</div>
+        <div class="lever-name">Multi-Modal Agents</div>
+        <div class="lever-desc">Text, audio, video, image &amp; documents.</div>
+      </div>
+      <div class="lever-col">
+        <div class="lever-num">05</div>
+        <div class="lever-name">Reusable Accelerators</div>
+        <div class="lever-desc">Industry agents &amp; solution libraries.</div>
+      </div>
+    </div>
+
+    <!-- Bottom row: video card + CTA pill -->
+    <div class="agentic-bottom r d2">
+      <div class="agentic-video" role="button" aria-label="Play LLM Foundry Playground video">
+        <div class="agentic-thumb">
+          <img src="Assets/video thumbnail 2 .png" alt="LLM Foundry Playground thumbnail">
+          <div class="agentic-thumb-overlay">
+            <div class="agentic-play">
+              <svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M6 4l9 5-9 5V4z" fill="white"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="agentic-video-text">
+          <span class="agentic-video-title">LLM Foundry Playground</span>
+          <span class="agentic-video-label">Watch Overview</span>
+        </div>
+      </div>
+      <a href="#" class="agentic-cta-pill">
+        Explore Agentic AI Platform
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
   </div>
 </section>
 
 <!-- ── 4. INDUSTRIES ─────────────────────────────────────────── -->
-<section class="ind-section section-warm" aria-labelledby="ind-h">
+<section class="ind-section" aria-labelledby="ind-h">
   <div class="wrap">
     <div class="ind-header r">
       <div class="pill-label">Where We Operate</div>
       <h2 class="h-section" id="ind-h">Enhancing Outcomes Across Industries</h2>
     </div>
-    <div class="ind-grid">
+  </div>
 
-      <article class="ind-card r d1">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path d="M3 26V13l13-8 13 8v13" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-          <rect x="11" y="18" width="10" height="8" stroke="currentColor" stroke-width="1.6"/>
-        </svg>
-        <span class="ind-name">Capital Markets</span>
-      </article>
-
-      <article class="ind-card r d1">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <rect x="3" y="9" width="26" height="17" rx="2" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M3 14h26" stroke="currentColor" stroke-width="1.6"/>
-        </svg>
-        <span class="ind-name">Banking &amp; Financial Services</span>
-      </article>
-
-      <article class="ind-card r d2">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M6 26c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <span class="ind-name">Education</span>
-      </article>
-
-      <article class="ind-card r d2">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M16 5v3M16 24v3M5 16h3M24 16h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <span class="ind-name">Energy &amp; Utilities</span>
-      </article>
-
-      <article class="ind-card r d3">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <rect x="4" y="12" width="24" height="14" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M9 12V9a7 7 0 0114 0v3" stroke="currentColor" stroke-width="1.6"/>
-        </svg>
-        <span class="ind-name">Manufacturing &amp; Supply Chain</span>
-      </article>
-
-      <article class="ind-card r d3">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path d="M16 4l2.5 7h7.5l-6 4.5 2.5 7L16 18.5 9.5 22.5l2.5-7L6 11h7.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        </svg>
-        <span class="ind-name">Pharma &amp; Life Sciences</span>
-      </article>
-
-      <article class="ind-card r d4">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path d="M4 22l6-8 5 5 5-10 8 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="ind-name">Science &amp; Research</span>
-      </article>
-
-      <article class="ind-card r d4">
-        <svg class="ind-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="10" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M16 9v7l4 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="ind-name">Sports Analytics</span>
-      </article>
-
+  <div class="ind-marquee-outer" id="ind-marquee-outer">
+    <div class="ind-track" id="ind-track">
+      <!-- set 1 -->
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Science and Research.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Science and Research</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Banking & Financial Services.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Banking &amp; Financial Services</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Logistics, Supply Chain & Manufacturing.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Logistics, Supply Chain &amp; Manufacturing</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Pharma and Life Sciences.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Pharma and Life Sciences</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Retail Tech Entertainment and Media.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Retail Tech, Entertainment and Media</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip"><div class="ind-chip-bg" style="background-image:url('Assets/Education.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Education</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <!-- set 2 (duplicate for seamless loop) -->
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Science and Research.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Science and Research</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Banking & Financial Services.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Banking &amp; Financial Services</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Logistics, Supply Chain & Manufacturing.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Logistics, Supply Chain &amp; Manufacturing</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Pharma and Life Sciences.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Pharma and Life Sciences</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Retail Tech Entertainment and Media.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Retail Tech, Entertainment and Media</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="#" class="ind-chip" aria-hidden="true"><div class="ind-chip-bg" style="background-image:url('Assets/Education.png')"></div><div class="ind-chip-overlay"></div><span class="ind-chip-name">Education</span><span class="ind-chip-arrow"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
     </div>
   </div>
 </section>
@@ -898,57 +1350,27 @@
 
       <div class="partner-chip p-aws">
         <span class="chip-name">AWS</span>
-        <span class="chip-logo">
-          <svg width="48" height="28" viewBox="0 0 48 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.9 10.6c0 .5.1.9.2 1.2.2.3.4.6.7.9.1.1.2.2.2.4 0 .1-.1.3-.3.4l-1 .7c-.1.1-.3.1-.4.1-.2 0-.3-.1-.5-.2-.2-.2-.4-.5-.6-.8-.2-.3-.3-.6-.5-1-1.2 1.4-2.8 2.1-4.6 2.1-1.3 0-2.4-.4-3.1-1.1C3.2 12.7 2.8 11.8 2.8 10.7c0-1.2.4-2.1 1.3-2.8.9-.7 2-.9 3.5-.9.5 0 1 0 1.5.1s1.1.2 1.6.3V6.9c0-1-.2-1.7-.6-2.1-.4-.4-1.1-.6-2-.6-.4 0-.9.1-1.4.2-.5.1-.9.3-1.4.5-.2.1-.4.2-.5.2H4.6c-.2 0-.3-.2-.3-.4V4c0-.2.1-.3.2-.4.2-.1.6-.3 1.1-.4.5-.1 1.1-.2 1.7-.2 1.3 0 2.2.3 2.8.9.6.6.9 1.5.9 2.8v3.9zm-6.3 2.3c.5 0 .9-.1 1.4-.3.5-.2.9-.5 1.3-1 .2-.3.4-.6.5-1 .1-.4.1-.8.1-1.3v-.6c-.4-.1-.8-.2-1.3-.2-.5 0-.9-.1-1.3-.1-.9 0-1.6.2-2 .6-.4.4-.7.9-.7 1.6 0 .7.2 1.1.5 1.5.3.5.8.8 1.5.8zm10.8 1.5c-.2 0-.4 0-.5-.1-.1-.1-.2-.3-.3-.6L15.2 4.3c-.1-.3-.1-.5-.1-.6 0-.2.1-.3.3-.3h1.3c.2 0 .4 0 .5.1.1.1.2.3.3.6l2.2 8.6 2-8.6c.1-.3.2-.5.3-.6.1-.1.3-.1.5-.1h1c.2 0 .4 0 .5.1.1.1.2.3.3.6l2 8.7 2.3-8.7c.1-.3.2-.5.3-.6.1-.1.3-.1.5-.1h1.2c.2 0 .3.1.3.3 0 .1 0 .2-.1.4l-3.2 10.4c-.1.3-.2.5-.3.6-.1.1-.3.1-.5.1h-1.1c-.2 0-.4 0-.5-.1-.1-.1-.2-.3-.3-.6l-2-8.3-2 8.3c-.1.3-.2.5-.3.6-.1.1-.3.1-.5.1h-1zm17 .3c-.8 0-1.5-.1-2.2-.3-.7-.2-1.2-.4-1.6-.7-.2-.1-.3-.3-.3-.5v-.7c0-.3.1-.4.3-.4.1 0 .2 0 .3.1l.3.2c.4.2.9.4 1.4.5.5.1 1 .2 1.5.2.8 0 1.4-.1 1.8-.4.4-.3.6-.7.6-1.2 0-.4-.1-.7-.4-.9-.3-.2-.8-.5-1.6-.7l-2.3-.7c-1.1-.4-2-.9-2.5-1.6-.5-.7-.8-1.5-.8-2.3 0-.7.1-1.3.4-1.8.3-.5.7-1 1.2-1.3.5-.4 1-.6 1.7-.8.6-.2 1.3-.3 2-.3.3 0 .7 0 1 .1.4 0 .7.1 1 .2.3.1.6.2.9.3.3.1.5.2.6.3.2.1.3.2.4.4.1.1.1.3.1.5v.6c0 .3-.1.4-.3.4-.1 0-.3-.1-.6-.2-.9-.4-1.9-.6-3-.6-.7 0-1.3.1-1.7.4-.4.3-.6.6-.6 1.1 0 .4.1.7.4.9.3.2.9.5 1.7.7l2.3.7c1.1.4 1.9.9 2.4 1.5.5.6.7 1.4.7 2.2 0 .7-.1 1.3-.4 1.9-.3.5-.7 1-1.2 1.4-.5.4-1.1.6-1.7.8-.7.1-1.4.2-2.1.2z" fill="#FF9900"/>
-            <path d="M41.5 21.7c-4.9 3.6-12 5.5-18.1 5.5-8.6 0-16.3-3.2-22.2-8.4-.5-.4 0-1 .5-.7 6.3 3.7 14.1 5.9 22.2 5.9 5.4 0 11.4-1.1 16.9-3.4.8-.4 1.5.5.7 1.1z" fill="#FF9900"/>
-            <path d="M43.6 19.3c-.6-.8-4.1-.4-5.7-.2-.5.1-.5-.4-.1-.7 2.8-2 7.4-1.4 7.9-.7.5.7-.1 5.3-2.8 7.5-.4.3-.8.2-.6-.3.6-1.5 2-4.8 1.3-5.6z" fill="#FF9900"/>
-          </svg>
-        </span>
+        <span class="chip-logo"><img src="Assets/aws.png" alt="AWS" height="32"></span>
       </div>
 
       <div class="partner-chip p-db">
         <span class="chip-name">Databricks</span>
-        <span class="chip-logo">
-          <svg width="36" height="32" viewBox="0 0 36 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 0L0 10.4v5.2L18 26l18-10.4v-5.2L18 0z" fill="#FF3621"/>
-            <path d="M0 15.6L18 26l18-10.4v5.2L18 32 0 21.6v-6z" fill="#FF3621" opacity=".7"/>
-            <path d="M0 10.4L18 21l18-10.6-18-10.4L0 10.4z" fill="white" opacity=".2"/>
-          </svg>
-        </span>
+        <span class="chip-logo"><img src="Assets/databricks.png" alt="Databricks" height="32"></span>
       </div>
 
       <div class="partner-chip p-gcp">
         <span class="chip-name">Google Cloud</span>
-        <span class="chip-logo">
-          <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24.8 13.3h-4.9v3h2.8c-.4 2-2.2 3-4.7 3-2.9 0-5.2-2.4-5.2-5.3s2.3-5.3 5.2-5.3c1.3 0 2.4.4 3.2 1.2l2.1-2.2C22 6.5 20.2 5.7 18 5.7c-4.6 0-8.3 3.7-8.3 8.3s3.7 8.3 8.3 8.3c4.8 0 8-3.4 8-8.1 0-.6-.1-1.1-.2-1.6l.1-.3z" fill="#4285F4"/>
-            <path d="M11.2 11.8l-2.6 1.9c.5 1 1.2 1.8 2 2.5l2.4-2.4c-.8-.5-1.4-1.2-1.8-2z" fill="#34A853"/>
-            <path d="M18 22.3c2.3 0 4.3-.8 5.7-2l-2.7-2.1c-.8.5-1.8.8-3 .8-2.5 0-4.6-1.7-5.3-4H9.9c.9 3.5 4.1 6 8.1 6 .1-.1.1-.1 0 0z" fill="#FBBC05"/>
-            <path d="M26.7 13c-.2-.6-.4-1.2-.7-1.7l-2.7 2.3.5 1h2.9v-1.6z" fill="#EA4335"/>
-          </svg>
-        </span>
+        <span class="chip-logo"><img src="Assets/Google_Cloud.png" alt="Google Cloud" height="32"></span>
       </div>
 
       <div class="partner-chip p-ms">
         <span class="chip-name">Microsoft</span>
-        <span class="chip-logo">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1" y="1" width="14" height="14" fill="#F25022"/>
-            <rect x="17" y="1" width="14" height="14" fill="#7FBA00"/>
-            <rect x="1" y="17" width="14" height="14" fill="#00A4EF"/>
-            <rect x="17" y="17" width="14" height="14" fill="#FFB900"/>
-          </svg>
-        </span>
+        <span class="chip-logo"><img src="Assets/microsoft.png" alt="Microsoft" height="32"></span>
       </div>
 
       <div class="partner-chip p-snow">
         <span class="chip-name">Snowflake</span>
-        <span class="chip-logo">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 2v28M16 2l-4 4M16 2l4 4M16 30l-4-4M16 30l4-4M2 16h28M2 16l4-4M2 16l4 4M30 16l-4-4M30 16l-4 4M5.4 5.4l21.2 21.2M5.4 5.4l5.2.8M5.4 5.4l.8 5.2M26.6 26.6l-5.2-.8M26.6 26.6l-.8-5.2M26.6 5.4L5.4 26.6M26.6 5.4l-.8 5.2M26.6 5.4l-5.2.8M5.4 26.6l.8-5.2M5.4 26.6l5.2-.8" stroke="#29B5E8" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </span>
+        <span class="chip-logo"><img src="Assets/snowflake.png" alt="Snowflake" height="32"></span>
       </div>
 
     </div>
@@ -1063,145 +1485,163 @@
       <div class="pill-label pill-label-dark">Recognition</div>
       <h2 class="h-section-white" id="awards-h">We Are Recognized for Impactful Results</h2>
     </div>
-    <div class="awards-grid">
-      <div class="award-card r d1"><p class="award-org">Newsweek</p><p class="award-title">AI Impact Awards 2025 Winner</p></div>
-      <div class="award-card r d1"><p class="award-org">Globee Awards</p><p class="award-title">Gold — Best AI Development</p></div>
-      <div class="award-card r d2"><p class="award-org">AIM Research</p><p class="award-title">Challenger — Top Data Science Service Providers</p></div>
-      <div class="award-card r d2"><p class="award-org">Microsoft × CNBC</p><p class="award-title">AI for All Award — Societal Progress</p></div>
-      <div class="award-card r d3"><p class="award-org">Industry Recognition</p><p class="award-title">Best Firms for Women in Tech To Work For</p></div>
-      <div class="award-card r d3"><p class="award-org">Everest Group PEAK Matrix</p><p class="award-title">Major Contender — Data Annotations &amp; Labeling</p></div>
-      <div class="award-card r d4"><p class="award-org">ISG</p><p class="award-title">Rising Star (Europe) / Product Challenger (US) — IDP Services</p></div>
-      <div class="award-card r d4"><p class="award-org">Edison Awards</p><p class="award-title">Bronze — Innovative Geospatial Solution</p></div>
+  </div>
+  <div class="awards-track-wrap" id="awardsWrap">
+    <div class="awards-track" id="awardsTrack">
+      <div class="award-card"><p class="award-org">Newsweek</p><p class="award-title">AI Impact Awards 2025 Winner</p></div>
+      <div class="award-card"><p class="award-org">Globee Awards</p><p class="award-title">Gold — Best AI Development</p></div>
+      <div class="award-card"><p class="award-org">AIM Research</p><p class="award-title">Challenger — Top Data Science Service Providers</p></div>
+      <div class="award-card"><p class="award-org">Microsoft × CNBC</p><p class="award-title">AI for All Award — Societal Progress</p></div>
+      <div class="award-card"><p class="award-org">Industry Recognition</p><p class="award-title">Best Firms for Women in Tech To Work For</p></div>
+      <div class="award-card"><p class="award-org">Everest Group PEAK Matrix</p><p class="award-title">Major Contender — Data Annotations &amp; Labeling</p></div>
+      <div class="award-card"><p class="award-org">ISG</p><p class="award-title">Rising Star (Europe) / Product Challenger (US) — IDP Services</p></div>
+      <div class="award-card"><p class="award-org">Edison Awards</p><p class="award-title">Bronze — Innovative Geospatial Solution</p></div>
+      <!-- duplicate for seamless loop -->
+      <div class="award-card" aria-hidden="true"><p class="award-org">Newsweek</p><p class="award-title">AI Impact Awards 2025 Winner</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">Globee Awards</p><p class="award-title">Gold — Best AI Development</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">AIM Research</p><p class="award-title">Challenger — Top Data Science Service Providers</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">Microsoft × CNBC</p><p class="award-title">AI for All Award — Societal Progress</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">Industry Recognition</p><p class="award-title">Best Firms for Women in Tech To Work For</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">Everest Group PEAK Matrix</p><p class="award-title">Major Contender — Data Annotations &amp; Labeling</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">ISG</p><p class="award-title">Rising Star (Europe) / Product Challenger (US) — IDP Services</p></div>
+      <div class="award-card" aria-hidden="true"><p class="award-org">Edison Awards</p><p class="award-title">Bronze — Innovative Geospatial Solution</p></div>
     </div>
   </div>
 </section>
 
 <!-- ── 10. THOUGHT LEADERSHIP ────────────────────────────────── -->
-<section class="thought-section section-light" aria-labelledby="thought-h">
+<section class="thought-section" aria-labelledby="thought-h">
   <div class="wrap">
-    <div class="thought-header r">
-      <div>
-        <div class="pill-label">Insights</div>
-        <h2 class="h-section" id="thought-h">We Provide Industry-Leading Thought Leadership</h2>
+    <div class="thought-header">
+      <h2 class="h-section" id="thought-h">Industry-Leading Thought Leadership</h2>
+      <div class="thought-nav">
+        <button class="thought-nav-btn" id="thought-prev" aria-label="Previous" disabled>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="thought-nav-btn" id="thought-next" aria-label="Next">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
-      <a href="#" class="btn btn-ghost" style="flex-shrink:0">View All</a>
     </div>
-    <div class="thought-grid">
 
-      <article class="thought-card r d1">
-        <div class="thought-thumb">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <rect x="10" y="7" width="28" height="34" rx="3" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M16 18h16M16 24h12M16 30h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="thought-body">
-          <div class="thought-type"><span class="label-upper">Industry Report</span></div>
-          <h3 class="thought-title">Cold Storage Industry Report 2026</h3>
-          <div class="thought-link">
-            <a href="#" class="btn btn-text">Dive Deeper
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a>
+    <div class="thought-carousel-wrap">
+      <div class="thought-carousel" id="thought-carousel">
+
+        <article class="thought-card">
+          <div class="thought-img">
+            <img src="Assets/AdobeStock_1291857457.jpeg" alt="Industry Report">
+            <span class="thought-cat-tag">Industry Report</span>
           </div>
-        </div>
-      </article>
-
-      <article class="thought-card r d2">
-        <div class="thought-thumb">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M18 24l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="thought-body">
-          <div class="thought-type"><span class="label-upper">Blog</span></div>
-          <h3 class="thought-title">Improving Clinical Data Quality: From Manual Reporting to Intelligent Automation</h3>
-          <div class="thought-link">
-            <a href="#" class="btn btn-text">Dive Deeper
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a>
+          <div class="thought-body">
+            <div class="thought-date">03.15.25</div>
+            <h3 class="thought-title">
+              <span class="thought-arrow">→</span>
+              The Future of Data Monetisation in Financial Services
+            </h3>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="thought-card r d3">
-        <div class="thought-thumb">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <path d="M10 38L24 10l14 28H10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M24 22v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="24" cy="34" r="1.5" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="thought-body">
-          <div class="thought-type"><span class="label-upper">Analyst Recognition</span></div>
-          <h3 class="thought-title">Straive Recognized as a Leader in AIM Research's PeMa Quadrant for Agentic AI Service Providers 2025</h3>
-          <div class="thought-link">
-            <a href="#" class="btn btn-text">Dive Deeper
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a>
+        <article class="thought-card">
+          <div class="thought-img">
+            <img src="Assets/AdobeStock_1838138865.jpeg" alt="Blog">
+            <span class="thought-cat-tag">Blog</span>
           </div>
-        </div>
-      </article>
+          <div class="thought-body">
+            <div class="thought-date">02.08.25</div>
+            <h3 class="thought-title">
+              <span class="thought-arrow">→</span>
+              Improving Clinical Data Quality: From Manual Reporting to Intelligent Automation
+            </h3>
+          </div>
+        </article>
 
+        <article class="thought-card">
+          <div class="thought-img">
+            <div class="thought-img-bg g1"></div>
+            <span class="thought-cat-tag">Analyst Recognition</span>
+          </div>
+          <div class="thought-body">
+            <div class="thought-date">01.20.25</div>
+            <h3 class="thought-title">
+              <span class="thought-arrow">→</span>
+              Straive Recognised as a Leader in AIM Research's PeMa Quadrant for Agentic AI 2025
+            </h3>
+          </div>
+        </article>
+
+        <article class="thought-card">
+          <div class="thought-img">
+            <div class="thought-img-bg g2"></div>
+            <span class="thought-cat-tag">Whitepaper</span>
+          </div>
+          <div class="thought-body">
+            <div class="thought-date">12.10.24</div>
+            <h3 class="thought-title">
+              <span class="thought-arrow">→</span>
+              Building Enterprise-Grade LLM Pipelines: Lessons from 500+ AI Deployments
+            </h3>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="thought-dots" id="thought-dots">
+      <button class="thought-dot active" data-idx="0" aria-label="Slide 1"></button>
+      <button class="thought-dot" data-idx="1" aria-label="Slide 2"></button>
     </div>
   </div>
 </section>
 
 <!-- ── 11. CULTURE ───────────────────────────────────────────── -->
-<section class="culture-section section-warm" aria-labelledby="culture-h">
-  <div class="wrap">
-    <div class="culture-inner">
-      <div class="r">
-        <div class="pill-label">Life at Straive</div>
-        <h2 class="h-section" id="culture-h">Explore Life @ Straive</h2>
-        <p class="body-lg" style="margin-top:var(--s24); max-width:44ch">At Straive, we believe that our teams and our capability will make data and AI accessible, adaptable, and actionable.</p>
-        <div class="culture-tags">
-          <span class="ctag">Meritocracy</span>
-          <span class="ctag">Innovation</span>
-          <span class="ctag">Returnship Programme</span>
-          <span class="ctag">Wellness Activities</span>
-          <span class="ctag">Respect</span>
-        </div>
-        <div class="culture-cta">
-          <a href="#" class="btn btn-ghost">Learn More</a>
-        </div>
-      </div>
-      <div class="culture-img r d1">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-          <circle cx="40" cy="30" r="12" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M14 68c0-14.359 11.64-26 26-26s26 11.641 26 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+<!-- ── 11–12. CAREERS + CTA ──────────────────────────────────── -->
+<section class="cc-section">
+
+  <div class="cc-card cc-left r">
+    <a href="#" class="cc-card-arrow" aria-label="Explore careers">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="cc-card-top">
+      <span class="cc-eyebrow">Life at Straive</span>
+      <h2 class="cc-heading" id="culture-h">Explore Life<br><span>@ Straive</span></h2>
+      <p class="cc-desc">At Straive, we believe our teams and capability will make data and AI accessible, adaptable, and actionable.</p>
+      <div class="culture-tags">
+        <span class="ctag">Meritocracy</span>
+        <span class="ctag">Innovation</span>
+        <span class="ctag">Returnship Programme</span>
+        <span class="ctag">Wellness Activities</span>
+        <span class="ctag">Respect</span>
       </div>
     </div>
+    <div class="cc-card-bottom">
+      <a href="#" class="btn btn-ghost">Explore Careers</a>
+    </div>
   </div>
-</section>
 
-<!-- ── 12. FINAL CTA ─────────────────────────────────────────── -->
-<section class="cta-section section-dark" aria-labelledby="cta-h">
-  <div class="r" style="max-width:800px; margin:0 auto; padding: 0 var(--s48)">
-    <div class="cta-rule" aria-hidden="true"></div>
-    <h2 class="cta-h2" id="cta-h">We Partner to Operationalize Data Analytics &amp; AI for Your Enterprise</h2>
-    <a href="#contact" class="btn btn-primary">
-      Contact Us
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+  <div class="cc-card cc-right r d1">
+    <a href="#contact" class="cc-card-arrow" aria-label="Contact us">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
+    <div class="cc-card-top">
+      <span class="cc-eyebrow">Partner with Us</span>
+      <h2 class="cc-right-h2 cc-heading" id="cta-h">We Partner to Operationalize<br><span>Data Analytics &amp; AI for Your Enterprise</span></h2>
+      <p class="cc-desc">Turning complex data into autonomous, intelligent actions that drive measurable ROI for global enterprises.</p>
+    </div>
+    <div class="cc-card-bottom">
+      <a href="#contact" class="btn btn-primary">
+        Contact Us
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
   </div>
+
 </section>
 
 <!-- ── 13. CONTACT FORM ──────────────────────────────────────── -->
-<section class="contact-section section-light" id="contact" aria-labelledby="contact-h">
+<section class="contact-section" id="contact" aria-labelledby="contact-h">
   <div class="wrap">
     <div class="contact-inner">
       <div class="r">
-        <div class="pill-label">Get In Touch</div>
         <h2 class="h-section" id="contact-h">Get In Touch</h2>
         <p class="body-lg" style="margin-top:var(--s24); max-width:38ch">Enter your information and describe your inquiry. We'll get back to you as soon as possible.</p>
       </div>
@@ -1223,10 +1663,22 @@
 
 <!-- ── FOOTER ────────────────────────────────────────────────── -->
 <footer class="footer">
-  <div class="wrap">
+  <div class="footer-bg"></div>
+  <div class="footer-bg-fade"></div>
+
+  <!-- Newsletter -->
+  <div class="newsletter-area">
+    <h2 class="newsletter-h">Data &amp; AI Insights.<br>No Noise.</h2>
+    <form class="newsletter-form" onsubmit="return false">
+      <input class="newsletter-input" type="email" placeholder="Enter your work email">
+      <button class="newsletter-btn" type="submit">Subscribe</button>
+    </form>
+  </div>
+
+  <div class="footer-glass">
     <div class="footer-top">
       <div>
-        <div class="footer-logo">Straive</div>
+        <div class="footer-logo"><img src="Assets/straive-logo.webp" alt="Straive"></div>
         <p class="footer-tag">Operationalizing data analytics &amp; AI for global enterprises.</p>
         <nav class="footer-socials" aria-label="Connect with us">
           <a href="#" class="fsocial" aria-label="LinkedIn"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
@@ -1239,46 +1691,64 @@
       <div>
         <p class="footer-col-h">Services</p>
         <ul class="footer-links">
-          <li><a href="#">Data Management</a></li><li><a href="#">Insights &amp; Analytics</a></li>
-          <li><a href="#">AI Engineering</a></li><li><a href="#">Product Engg. &amp; Ops</a></li>
-          <li><a href="#">IT &amp; Tech-Ops</a></li><li><a href="#">AI Customer Experience</a></li>
+          <li><a href="#">Data Management</a></li>
+          <li><a href="#">Insights &amp; Analytics</a></li>
+          <li><a href="#">AI Engineering</a></li>
+          <li><a href="#">Product Engg. &amp; Ops</a></li>
+          <li><a href="#">IT &amp; Tech-Ops</a></li>
+          <li><a href="#">AI Customer Experience</a></li>
           <li><a href="#">Generative AI</a></li>
         </ul>
       </div>
       <div>
         <p class="footer-col-h">Industries</p>
         <ul class="footer-links">
-          <li><a href="#">Investment Management</a></li><li><a href="#">Banking &amp; Finance</a></li>
-          <li><a href="#">Education</a></li><li><a href="#">Energy</a></li>
-          <li><a href="#">Logistics &amp; Supply Chain</a></li><li><a href="#">Pharma &amp; Life Sciences</a></li>
-          <li><a href="#">Retail Tech / Media</a></li><li><a href="#">Science &amp; Research</a></li>
+          <li><a href="#">Investment Management</a></li>
+          <li><a href="#">Banking &amp; Finance</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">Energy</a></li>
+          <li><a href="#">Logistics &amp; Supply Chain</a></li>
+          <li><a href="#">Pharma &amp; Life Sciences</a></li>
+          <li><a href="#">Retail Tech / Media</a></li>
+          <li><a href="#">Science &amp; Research</a></li>
         </ul>
       </div>
       <div>
         <p class="footer-col-h">Thought Leadership</p>
         <ul class="footer-links">
-          <li><a href="#">Blogs</a></li><li><a href="#">Case Studies</a></li>
-          <li><a href="#">Brochures</a></li><li><a href="#">Whitepapers</a></li>
-          <li><a href="#">E-books</a></li><li><a href="#">Webinars</a></li>
-          <li><a href="#">Infographics</a></li><li><a href="#">Videos</a></li>
+          <li><a href="#">Blogs</a></li>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Brochures</a></li>
+          <li><a href="#">Whitepapers</a></li>
+          <li><a href="#">E-books</a></li>
+          <li><a href="#">Webinars</a></li>
+          <li><a href="#">Infographics</a></li>
+          <li><a href="#">Videos</a></li>
         </ul>
       </div>
       <div>
         <p class="footer-col-h">About Us</p>
         <ul class="footer-links">
-          <li><a href="#">About Straive</a></li><li><a href="#">ESG</a></li>
-          <li><a href="#">News</a></li><li><a href="#">Partnership</a></li>
-          <li><a href="#">Careers</a></li><li><a href="#">Contact Us</a></li>
+          <li><a href="#">About Straive</a></li>
+          <li><a href="#">ESG</a></li>
+          <li><a href="#">News</a></li>
+          <li><a href="#">Partnership</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact Us</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="footer-subs">
-        <span class="fsub">Gramener</span><span class="fsub">Learning Mate</span>
-        <span class="fsub">DoubleLine</span><span class="fsub">SG Analytics</span>
+        <span class="fsub">Gramener</span>
+        <span class="fsub">LearningMate</span>
+        <span class="fsub">DoubleLine</span>
+        <span class="fsub">SG Analytics</span>
       </div>
       <div class="footer-legal">
-        <a href="#">Cookie Policy</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
       </div>
       <p class="footer-copy">© 2026 Straive. All rights reserved.</p>
     </div>
@@ -1287,52 +1757,16 @@
 
 <!-- ── JS ────────────────────────────────────────────────────── -->
 <script>
-/* Nav */
+/* Nav — glass appears after scrolling past hero */
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 20), { passive: true });
+const heroSection = document.querySelector('.hero');
+function updateNav() {
+  const threshold = heroSection ? heroSection.offsetHeight * 0.85 : window.innerHeight * 0.5;
+  nav.classList.toggle('solid', window.scrollY > threshold);
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
 
-/* Particle canvas */
-(function () {
-  const canvas = document.getElementById('particle-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, nodes, mouse = { x: -9999, y: -9999 };
-
-  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
-  function mkNodes() {
-    nodes = Array.from({ length: Math.floor(W * H / 13000) }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
-      r: Math.random() * 1.4 + .7
-    }));
-  }
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        if (d < 120) { ctx.beginPath(); ctx.strokeStyle = `rgba(12,12,16,${(1-d/120)*.13})`; ctx.lineWidth = .7; ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke(); }
-      }
-      const mx = nodes[i].x - mouse.x, my = nodes[i].y - mouse.y;
-      const md = Math.sqrt(mx*mx + my*my);
-      if (md < 150) { const f = (150-md)/150*.012; nodes[i].vx -= mx*f; nodes[i].vy -= my*f; }
-    }
-    nodes.forEach(n => {
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(12,12,16,0.18)'; ctx.fill();
-      n.x += n.vx; n.y += n.vy; n.vx *= .99; n.vy *= .99;
-      if (n.x < 0 || n.x > W) n.vx *= -1;
-      if (n.y < 0 || n.y > H) n.vy *= -1;
-      n.x = Math.max(0, Math.min(W, n.x)); n.y = Math.max(0, Math.min(H, n.y));
-    });
-    requestAnimationFrame(draw);
-  }
-  window.addEventListener('resize', () => { resize(); mkNodes(); }, { passive: true });
-  const hero = canvas.closest('section');
-  hero.addEventListener('mousemove', e => { const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; }, { passive: true });
-  hero.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
-  resize(); mkNodes(); draw();
-})();
 
 /* Scroll reveal */
 const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); ro.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
@@ -1353,6 +1787,85 @@ function animateCount(el, to, dur = 1500) {
 }
 const co = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const c = parseInt(e.target.dataset.count); if (c) animateCount(e.target, c); co.unobserve(e.target); } }), { threshold: .5 });
 document.querySelectorAll('[data-count]').forEach(el => co.observe(el));
+
+/* Awards ticker — pause on hover */
+(function () {
+  const wrap = document.getElementById('awardsWrap');
+  const track = document.getElementById('awardsTrack');
+  if (!wrap || !track) return;
+  wrap.addEventListener('mouseenter', () => track.classList.add('paused'));
+  wrap.addEventListener('mouseleave', () => track.classList.remove('paused'));
+})();
+
+/* Capabilities accordion */
+(function () {
+  const accordion = document.getElementById('capAccordion');
+  if (!accordion) return;
+  const panels = Array.from(accordion.querySelectorAll('.cap-panel'));
+
+  function activate(index) {
+    panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
+  }
+
+  panels.forEach((panel, i) => {
+    panel.addEventListener('mouseenter', () => activate(i));
+  });
+
+  accordion.addEventListener('mouseleave', () => activate(0));
+})();
+
+// ── Industries marquee pause on hover ────────────────────────
+(function(){
+  const track = document.getElementById('ind-track');
+  const outer = document.getElementById('ind-marquee-outer');
+  if (!track || !outer) return;
+  outer.addEventListener('mouseenter', () => track.classList.add('paused'));
+  outer.addEventListener('mouseleave', () => track.classList.remove('paused'));
+})();
+
+// ── Dark-to-light curtain reveal — Industries section ────────
+(function(){
+  const ind = document.querySelector('.ind-section');
+  if (!ind) return;
+  const obs = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      ind.classList.add('theme-revealed');
+      obs.disconnect();
+    }
+  }, { threshold: 0.08 });
+  obs.observe(ind);
+})();
+
+// ── Thought Leadership Carousel ──────────────────────────────
+(function(){
+  const carousel = document.getElementById('thought-carousel');
+  const prevBtn  = document.getElementById('thought-prev');
+  const nextBtn  = document.getElementById('thought-next');
+  const dots     = document.querySelectorAll('.thought-dot');
+  if (!carousel) return;
+
+  const cards      = carousel.querySelectorAll('.thought-card');
+  const total      = cards.length;
+  const perPage    = 3;
+  const maxSlide   = total - perPage;
+  let current      = 0;
+
+  function getCardWidth() {
+    return cards[0].getBoundingClientRect().width + 16;
+  }
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(idx, maxSlide));
+    carousel.style.transform = `translateX(-${current * getCardWidth()}px)`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current >= maxSlide;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+})();
 </script>
 </body>
 </html>
